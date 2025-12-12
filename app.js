@@ -377,8 +377,9 @@ function selectElement(element) {
 }
 
 // Показать информацию об элементе
+// Показать информацию об элементе
 function showElementInfo(element) {
-    console.log('Показываем информацию для элемента:', element.symbol);
+    console.log('Показываем информацию для элемента:', element.symbol, element.number);
     
     const infoPanel = document.getElementById('element-info');
     if (!infoPanel) {
@@ -386,44 +387,109 @@ function showElementInfo(element) {
         return;
     }
     
+    // Показываем панель информации
     infoPanel.classList.add('active');
     
-    // Обновляем основную информацию
-    const symbolLarge = document.querySelector('.element-symbol-large');
-    const nameElement = document.querySelector('.element-name');
-    const numberElement = document.querySelector('.element-number');
-    const massElement = document.querySelector('.element-mass');
-    const categoryElement = document.querySelector('.element-category');
+    // ВАЖНО: Используем ID или конкретные селекторы для каждого элемента
+    // Исправляем селекторы - ищем элементы внутри панели информации
     
-    if (symbolLarge) symbolLarge.textContent = element.symbol;
-    if (nameElement) nameElement.textContent = element.name;
-    if (numberElement) numberElement.textContent = `Атомный номер: ${element.number}`;
-    if (massElement) massElement.textContent = `Атомная масса: ${element.mass || '--'}`;
-    if (categoryElement) categoryElement.textContent = `Категория: ${getCategoryName(element.category)}`;
+    // Обновляем основную информацию в карточке элемента
+    const symbolLarge = infoPanel.querySelector('.element-symbol-large');
+    const nameElement = infoPanel.querySelector('.element-name'); // В карточке
+    const numberElement = infoPanel.querySelector('.element-card-large .element-number'); // В карточке
+    const massElement = infoPanel.querySelector('.element-card-large .element-mass'); // В карточке
+    const categoryElement = infoPanel.querySelector('.element-card-large .element-category'); // В карточке
     
-    // Обновляем вкладки
-    const fundamentalEl = document.getElementById('prop-fundamental');
-    const propertiesEl = document.getElementById('prop-properties');
-    const reactionsEl = document.getElementById('prop-reactions');
-    const historyEl = document.getElementById('prop-history');
-    const applicationsEl = document.getElementById('prop-applications');
+    console.log('Найденные элементы:', {
+        symbolLarge: !!symbolLarge,
+        nameElement: !!nameElement,
+        numberElement: !!numberElement,
+        massElement: !!massElement,
+        categoryElement: !!categoryElement
+    });
     
-    if (fundamentalEl) fundamentalEl.textContent = element.fundamental || 'Информация отсутствует';
-    if (propertiesEl) propertiesEl.textContent = element.properties || 'Информация отсутствует';
-    if (reactionsEl) reactionsEl.textContent = element.reactions || 'Информация отсутствует';
-    if (historyEl) historyEl.textContent = element.history || 'Информация отсутствует';
-    if (applicationsEl) applicationsEl.textContent = element.applications || 'Информация отсутствует';
-    
-    // Обновляем цвет карточки
-    const card = document.querySelector('.element-card-large');
-    if (card) {
-        card.className = `element-card-large ${element.category}`;
-        if (element.isRadioactive) card.classList.add('radioactive');
+    if (symbolLarge) {
+        symbolLarge.textContent = element.symbol;
+        console.log('Установлен символ:', element.symbol);
     }
     
-    console.log('Информация обновлена');
+    if (nameElement) {
+        nameElement.textContent = element.name;
+        console.log('Установлено название:', element.name);
+    }
+    
+    if (numberElement) {
+        numberElement.textContent = `Атомный номер: ${element.number}`;
+        console.log('Установлен номер:', element.number);
+    }
+    
+    if (massElement) {
+        massElement.textContent = `Атомная масса: ${element.mass || '--'}`;
+        console.log('Установлена масса:', element.mass);
+    }
+    
+    if (categoryElement) {
+        categoryElement.textContent = `Категория: ${getCategoryName(element.category)}`;
+        console.log('Установлена категория:', element.category);
+    }
+    
+    // Обновляем вкладки
+    const fundamentalEl = infoPanel.querySelector('#prop-fundamental');
+    const propertiesEl = infoPanel.querySelector('#prop-properties');
+    const reactionsEl = infoPanel.querySelector('#prop-reactions');
+    const historyEl = infoPanel.querySelector('#prop-history');
+    const applicationsEl = infoPanel.querySelector('#prop-applications');
+    
+    if (fundamentalEl) {
+        fundamentalEl.textContent = element.fundamental || 'Информация отсутствует';
+        console.log('Обновлена фундаментальная информация');
+    }
+    
+    if (propertiesEl) {
+        propertiesEl.textContent = element.properties || 'Информация отсутствует';
+        console.log('Обновлены свойства');
+    }
+    
+    if (reactionsEl) {
+        reactionsEl.textContent = element.reactions || 'Информация отсутствует';
+        console.log('Обновлены реакции');
+    }
+    
+    if (historyEl) {
+        historyEl.textContent = element.history || 'Информация отсутствует';
+        console.log('Обновлена история');
+    }
+    
+    if (applicationsEl) {
+        applicationsEl.textContent = element.applications || 'Информация отсутствует';
+        console.log('Обновлено применение');
+    }
+    
+    // Обновляем цвет карточки
+    const card = infoPanel.querySelector('.element-card-large');
+    if (card) {
+        // Удаляем все классы категорий
+        card.className = 'element-card-large';
+        // Добавляем класс текущей категории
+        card.classList.add(element.category);
+        if (element.isRadioactive) card.classList.add('radioactive');
+        console.log('Обновлен цвет карточки:', element.category);
+    }
+    
+    // Активируем первую вкладку
+    const firstTab = infoPanel.querySelector('.tab-btn[data-tab="fundamental"]');
+    const firstPane = infoPanel.querySelector('#tab-fundamental');
+    
+    if (firstTab && firstPane) {
+        infoPanel.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        infoPanel.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        
+        firstTab.classList.add('active');
+        firstPane.classList.add('active');
+    }
+    
+    console.log('Информация об элементе успешно обновлена');
 }
-
 // Название категории
 function getCategoryName(category) {
     const names = {
