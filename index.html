@@ -51,59 +51,64 @@
             <!-- Таблица генерируется через JavaScript -->
         </div>
 
-        <!-- Блок информации об элементе -->
-        <div class="element-info" id="element-info">
-            <div class="info-header">
-                <h2>Выберите элемент</h2>
-                <button id="close-info"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="info-content">
-                <div class="element-card-large">
-                    <div class="element-symbol-large">?</div>
-                    <div class="element-details">
-                        <h3 class="element-name">Элемент</h3>
-                        <div class="element-number">Атомный номер: --</div>
-                        <div class="element-mass">Атомная масса: --</div>
-                        <div class="element-category">Категория: --</div>
-                    </div>
-                </div>
-
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="fundamental">Основные свойства</button>
-                    <button class="tab-btn" data-tab="properties">Характеристики</button>
-                    <button class="tab-btn" data-tab="reactions">Реакции</button>
-                    <button class="tab-btn" data-tab="history">История</button>
-                    <button class="tab-btn" data-tab="applications">Применение</button>
-                </div>
-
-                <div class="tab-content">
-                    <div class="tab-pane active" id="tab-fundamental">
-                        <pre id="prop-fundamental">--</pre>
-                    </div>
-                    <div class="tab-pane" id="tab-properties">
-                        <p id="prop-properties">--</p>
-                    </div>
-                    <div class="tab-pane" id="tab-reactions">
-                        <pre id="prop-reactions">--</pre>
-                    </div>
-                    <div class="tab-pane" id="tab-history">
-                        <p id="prop-history">--</p>
-                    </div>
-                    <div class="tab-pane" id="tab-applications">
-                        <pre id="prop-applications">--</pre>
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button id="copy-info" class="action-btn">
-                        <i class="fas fa-copy"></i> Копировать информацию
-                    </button>
-                    <button id="wiki-link" class="action-btn">
-                        <i class="fab fa-wikipedia-w"></i> Wikipedia
-                    </button>
-                </div>
+<!-- Блок информации об элементе -->
+<div class="element-info" id="element-info">
+    <div class="info-header">
+        <h2>Информация об элементе</h2>
+        <button id="close-info"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="info-content">
+        <!-- КАРТОЧКА ЭЛЕМЕНТА -->
+        <div class="element-card-large">
+            <div class="element-symbol-large">?</div>
+            <div class="element-details">
+                <!-- ВАЖНО: у каждого элемента есть уникальный класс -->
+                <h3 class="element-name">Элемент</h3>
+                <div class="element-number">Атомный номер: --</div>
+                <div class="element-mass">Атомная масса: --</div>
+                <div class="element-category">Категория: --</div>
             </div>
         </div>
+        
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="fundamental">Основные свойства</button>
+            <button class="tab-btn" data-tab="properties">Характеристики</button>
+            <button class="tab-btn" data-tab="reactions">Реакции</button>
+            <button class="tab-btn" data-tab="history">История</button>
+            <button class="tab-btn" data-tab="applications">Применение</button>
+        </div>
+        
+        <!-- СОДЕРЖИМОЕ ВКЛАДОК -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab-fundamental">
+                <pre id="prop-fundamental">--</pre>
+            </div>
+            <div class="tab-pane" id="tab-properties">
+                <p id="prop-properties">--</p>
+            </div>
+            <div class="tab-pane" id="tab-reactions">
+                <pre id="prop-reactions">--</pre>
+            </div>
+            <div class="tab-pane" id="tab-history">
+                <p id="prop-history">--</p>
+            </div>
+            <div class="tab-pane" id="tab-applications">
+                <pre id="prop-applications">--</pre>
+            </div>
+        </div>
+        
+        <!-- КНОПКИ -->
+        <div class="actions">
+            <button id="copy-info" class="action-btn">
+                <i class="fas fa-copy"></i> Копировать информацию
+            </button>
+            <button id="wiki-link" class="action-btn">
+                <i class="fab fa-wikipedia-w"></i> Wikipedia
+            </button>
+        </div>
+    </div>
+</div>
 
         <!-- Быстрые действия -->
         <div class="quick-actions">
