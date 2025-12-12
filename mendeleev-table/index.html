@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Таблица Менделеева | Interactive</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <header class="header">
+            <h1><i class="fas fa-atom"></i> Интерактивная таблица Менделеева</h1>
+            <div class="controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" placeholder="Поиск элемента (H, Водород, 1)...">
+                    <button id="clear-search"><i class="fas fa-times"></i></button>
+                </div>
+                <button id="toggle-theme" title="Сменить тему">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Фильтры -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Все элементы</button>
+            <button class="filter-btn" data-filter="metal">Металлы</button>
+            <button class="filter-btn" data-filter="nonmetal">Неметаллы</button>
+            <button class="filter-btn" data-filter="noble-gas">Благородные газы</button>
+            <button class="filter-btn" data-filter="alkali">Щелочные металлы</button>
+            <button class="filter-btn" data-filter="alkaline-earth">Щёлочноземельные</button>
+            <button class="filter-btn" data-filter="transition">Переходные металлы</button>
+            <button class="filter-btn" data-filter="metalloid">Полуметаллы</button>
+            <button class="filter-btn" data-filter="radioactive">Радиоактивные</button>
+        </div>
+
+        <!-- Загрузка -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Загрузка таблицы Менделеева...</p>
+        </div>
+
+        <!-- Основная таблица -->
+        <div class="periodic-table" id="periodic-table" style="display: none;">
+            <!-- Таблица генерируется через JavaScript -->
+        </div>
+
+        <!-- Блок информации об элементе -->
+        <div class="element-info" id="element-info">
+            <div class="info-header">
+                <h2>Выберите элемент</h2>
+                <button id="close-info"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="info-content">
+                <div class="element-card-large">
+                    <div class="element-symbol-large">?</div>
+                    <div class="element-details">
+                        <h3 class="element-name">Элемент</h3>
+                        <div class="element-number">Атомный номер: --</div>
+                        <div class="element-mass">Атомная масса: --</div>
+                        <div class="element-category">Категория: --</div>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="fundamental">Основные свойства</button>
+                    <button class="tab-btn" data-tab="properties">Характеристики</button>
+                    <button class="tab-btn" data-tab="reactions">Реакции</button>
+                    <button class="tab-btn" data-tab="history">История</button>
+                    <button class="tab-btn" data-tab="applications">Применение</button>
+                </div>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab-fundamental">
+                        <pre id="prop-fundamental">--</pre>
+                    </div>
+                    <div class="tab-pane" id="tab-properties">
+                        <p id="prop-properties">--</p>
+                    </div>
+                    <div class="tab-pane" id="tab-reactions">
+                        <pre id="prop-reactions">--</pre>
+                    </div>
+                    <div class="tab-pane" id="tab-history">
+                        <p id="prop-history">--</p>
+                    </div>
+                    <div class="tab-pane" id="tab-applications">
+                        <pre id="prop-applications">--</pre>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="copy-info" class="action-btn">
+                        <i class="fas fa-copy"></i> Копировать информацию
+                    </button>
+                    <button id="wiki-link" class="action-btn">
+                        <i class="fab fa-wikipedia-w"></i> Wikipedia
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Быстрые действия -->
+        <div class="quick-actions">
+            <button id="show-all" class="quick-btn">
+                <i class="fas fa-expand"></i> Показать все
+            </button>
+            <button id="zoom-in" class="quick-btn">
+                <i class="fas fa-search-plus"></i> Увеличить
+            </button>
+            <button id="zoom-out" class="quick-btn">
+                <i class="fas fa-search-minus"></i> Уменьшить
+            </button>
+            <button id="reset-view" class="quick-btn">
+                <i class="fas fa-redo"></i> Сбросить
+            </button>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Всего элементов:</span>
+                <span class="stat-value" id="total-elements">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Выбранный:</span>
+                <span class="stat-value" id="selected-element">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Отфильтровано:</span>
+                <span class="stat-value" id="filtered-count">0</span>
+            </div>
+        </div>
+
+        <!-- Подвал -->
+        <footer class="footer">
+            <p>Для Telegram Web App • Данные из elements1.json • Обновлено: 2024</p>
+            <p class="hint">💡 Кликните на элемент для подробной информации</p>
+        </footer>
+    </div>
+
+    <!-- Загружаем JSON и основной скрипт -->
+    <script src="elements1.json"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
