@@ -31,23 +31,19 @@ const elementPositions = {
     49: {row: 5, col: 13}, 50: {row: 5, col: 14}, 51: {row: 5, col: 15}, 52: {row: 5, col: 16},
     53: {row: 5, col: 17}, 54: {row: 5, col: 18},
     55: {row: 6, col: 1}, 56: {row: 6, col: 2}, 
-    // Лантаноиды (ряд 8)
     57: {row: 8, col: 3}, 58: {row: 8, col: 4}, 59: {row: 8, col: 5}, 60: {row: 8, col: 6},
     61: {row: 8, col: 7}, 62: {row: 8, col: 8}, 63: {row: 8, col: 9}, 64: {row: 8, col: 10},
     65: {row: 8, col: 11}, 66: {row: 8, col: 12}, 67: {row: 8, col: 13}, 68: {row: 8, col: 14},
     69: {row: 8, col: 15}, 70: {row: 8, col: 16}, 71: {row: 8, col: 17},
-    // Продолжение 6 периода
     72: {row: 6, col: 4}, 73: {row: 6, col: 5}, 74: {row: 6, col: 6}, 75: {row: 6, col: 7},
     76: {row: 6, col: 8}, 77: {row: 6, col: 9}, 78: {row: 6, col: 10}, 79: {row: 6, col: 11},
     80: {row: 6, col: 12}, 81: {row: 6, col: 13}, 82: {row: 6, col: 14}, 83: {row: 6, col: 15},
     84: {row: 6, col: 16}, 85: {row: 6, col: 17}, 86: {row: 6, col: 18},
     87: {row: 7, col: 1}, 88: {row: 7, col: 2},
-    // Актиноиды (ряд 9)
     89: {row: 9, col: 3}, 90: {row: 9, col: 4}, 91: {row: 9, col: 5}, 92: {row: 9, col: 6},
     93: {row: 9, col: 7}, 94: {row: 9, col: 8}, 95: {row: 9, col: 9}, 96: {row: 9, col: 10},
     97: {row: 9, col: 11}, 98: {row: 9, col: 12}, 99: {row: 9, col: 13}, 100: {row: 9, col: 14},
     101: {row: 9, col: 15}, 102: {row: 9, col: 16}, 103: {row: 9, col: 17},
-    // Продолжение 7 периода
     104: {row: 7, col: 4}, 105: {row: 7, col: 5}, 106: {row: 7, col: 6}, 107: {row: 7, col: 7},
     108: {row: 7, col: 8}, 109: {row: 7, col: 9}, 110: {row: 7, col: 10}, 111: {row: 7, col: 11},
     112: {row: 7, col: 12}, 113: {row: 7, col: 13}, 114: {row: 7, col: 14}, 115: {row: 7, col: 15},
@@ -89,20 +85,6 @@ function getElementCategory(element) {
     if ([13, 31, 49, 50, 81, 82, 83, 113, 114, 115, 116].includes(number)) return 'post-transition';
     
     return 'unknown';
-}
-
-// Определение группы и периода
-function getGroupAndPeriod(number) {
-    if (number === 1) return {group: 1, period: 1};
-    if (number === 2) return {group: 18, period: 1};
-    if (number <= 10) return {group: number - 2, period: 2};
-    if (number <= 18) return {group: number - 10, period: 3};
-    if (number <= 36) {
-        if (number <= 20) return {group: number - 18, period: 4};
-        if (number <= 30) return {group: number - 20 + 3, period: 4};
-        return {group: number - 28 + 12, period: 4};
-    }
-    return {group: 0, period: Math.ceil(number / 18)};
 }
 
 // Инициализация
@@ -181,7 +163,7 @@ async function loadElements() {
                 symbol: item.symbol || '',
                 name: item.russian_name || item.name_en || '',
                 name_en: item.name_en || '',
-                category: categoryInfo.split(' ')[0],
+                category: categoryInfo,
                 group: group || 0,
                 period: period || 0,
                 mass: mass,
@@ -208,6 +190,20 @@ async function loadElements() {
     }
 }
 
+// Определение группы и периода
+function getGroupAndPeriod(number) {
+    if (number === 1) return {group: 1, period: 1};
+    if (number === 2) return {group: 18, period: 1};
+    if (number <= 10) return {group: number - 2, period: 2};
+    if (number <= 18) return {group: number - 10, period: 3};
+    if (number <= 36) {
+        if (number <= 20) return {group: number - 18, period: 4};
+        if (number <= 30) return {group: number - 20 + 3, period: 4};
+        return {group: number - 28 + 12, period: 4};
+    }
+    return {group: 0, period: Math.ceil(number / 18)};
+}
+
 // Показать/скрыть загрузку
 function showLoading(show) {
     const loading = document.getElementById('loading');
@@ -222,8 +218,7 @@ function showLoading(show) {
     }
 }
 
-// В функции initializeTable() обновите создание таблицы:
-// В функции initializeTable() добавьте базовые стили:
+// Инициализация таблицы
 function initializeTable() {
     console.log('Инициализация таблицы...');
     
@@ -273,7 +268,6 @@ function initializeTable() {
     // Показываем таблицу
     table.style.display = 'grid';
     table.style.width = 'auto'; // Важно: авто-ширина
-    table.style.gridAutoColumns = 'minmax(auto, 1fr)';
     
     console.log(`Таблица инициализирована. Элементов: ${addedElements}`);
 }
@@ -369,15 +363,7 @@ function addRowLabels() {
 
 // Выбор элемента
 function selectElement(element) {
-    console.log('=== ВЫБОР ЭЛЕМЕНТА ===');
-    console.log('Элемент:', element.number, element.symbol, element.name);
-    console.log('Данные элемента:', {
-        number: element.number,
-        symbol: element.symbol,
-        name: element.name,
-        mass: element.mass,
-        category: element.category
-    });
+    console.log('Выбор элемента:', element.number, element.symbol, element.name);
     
     state.selectedElement = element;
     
@@ -389,36 +375,20 @@ function selectElement(element) {
     const selectedEl = document.querySelector(`.element[data-number="${element.number}"]`);
     if (selectedEl) {
         selectedEl.classList.add('selected');
-        console.log('Элемент выделен в таблице');
-        
-        // Прокручиваем к элементу (опционально)
-        selectedEl.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center', 
-            inline: 'center' 
-        });
-    } else {
-        console.error('Элемент не найден в DOM:', element.number);
     }
     
     // Показываем информацию
-    console.log('Вызываем showElementInfo...');
     showElementInfo(element);
     
     // Обновляем статистику
     const selectedElementSpan = document.getElementById('selected-element');
     if (selectedElementSpan) {
         selectedElementSpan.textContent = element.symbol;
-        console.log('Статистика обновлена:', element.symbol);
     }
-    
-    console.log('=== ВЫБОР ЭЛЕМЕНТА ЗАВЕРШЕН ===');
 }
 
 // Показать информацию об элементе
 function showElementInfo(element) {
-    console.log('Показываем информацию для элемента:', element.symbol, element.number);
-    
     const infoPanel = document.getElementById('element-info');
     if (!infoPanel) {
         console.error('Элемент #element-info не найден!');
@@ -473,8 +443,6 @@ function showElementInfo(element) {
         firstTab.classList.add('active');
         firstPane.classList.add('active');
     }
-    
-    console.log('Информация об элементе успешно обновлена');
 }
 
 // Название категории
@@ -493,13 +461,7 @@ function getCategoryName(category) {
     };
     return names[category] || category;
 }
-function handleResize() {
-    adjustContainerSize();
-    // Принудительно обновляем масштаб при ресайзе
-    if (state.zoom !== 1) {
-        updateZoom();
-    }
-}
+
 // Настройка обработчиков событий
 function setupEventListeners() {
     console.log('Настройка обработчиков событий...');
@@ -527,8 +489,7 @@ function setupEventListeners() {
     setupZoomControls();
     
     // Обработка изменения размера окна
-  window.addEventListener('resize', handleResize);
-    });
+    window.addEventListener('resize', handleResize);
     
     // Фильтры
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -708,9 +669,6 @@ function setupZoomControls() {
             if (zoomValueElement) {
                 zoomValueElement.textContent = `${this.value}%`;
             }
-            
-            // Показываем индикатор
-            showZoomIndicator(`${this.value}%`);
         });
     }
     
@@ -732,9 +690,6 @@ function setupZoomControls() {
                     zoomValueElement.textContent = `${zoomValue * 100}%`;
                 }
             }
-            
-            // Показываем индикатор
-            showZoomIndicator(`${zoomValue * 100}%`);
         });
     });
     
@@ -757,9 +712,6 @@ function setupZoomControls() {
                 }
             }
             
-            // Показываем индикатор
-            showZoomIndicator('100%');
-            
             // Показываем сообщение в Telegram
             if (Telegram.WebApp && Telegram.WebApp.showAlert) {
                 Telegram.WebApp.showAlert('Масштаб сброшен до 100%');
@@ -777,52 +729,13 @@ function setupZoomControls() {
     console.log('Управление масштабом настроено');
 }
 
-// Функция показа индикатора масштаба
-function showZoomIndicator(text) {
-    // Удаляем старый индикатор, если есть
-    const oldIndicator = document.getElementById('zoom-temp-indicator');
-    if (oldIndicator) {
-        oldIndicator.remove();
+// Обработчик изменения размера окна
+function handleResize() {
+    adjustContainerSize();
+    // Принудительно обновляем масштаб при ресайзе
+    if (state.zoom !== 1) {
+        updateZoom();
     }
-    
-    // Создаем новый индикатор
-    const indicator = document.createElement('div');
-    indicator.id = 'zoom-temp-indicator';
-    indicator.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        z-index: 9999;
-        pointer-events: none;
-        opacity: 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        transition: opacity 0.3s ease;
-    `;
-    indicator.textContent = `Масштаб: ${text}`;
-    
-    document.body.appendChild(indicator);
-    
-    // Показываем с анимацией
-    requestAnimationFrame(() => {
-        indicator.style.opacity = '1';
-    });
-    
-    // Скрываем через 1 секунду
-    setTimeout(() => {
-        indicator.style.opacity = '0';
-        setTimeout(() => {
-            if (indicator.parentNode) {
-                indicator.parentNode.removeChild(indicator);
-            }
-        }, 300);
-    }, 1000);
 }
 
 // Фильтрация элементов
@@ -897,7 +810,6 @@ function updateStats() {
 }
 
 // Обновление масштаба
-// Обновление масштаба - ПЕРЕРАБОТАННАЯ ВЕРСИЯ
 function updateZoom() {
     const table = document.getElementById('periodic-table');
     const container = document.getElementById('table-container');
@@ -911,19 +823,18 @@ function updateZoom() {
     state.zoom = Math.max(0.5, Math.min(2.0, state.zoom));
     
     // Сохраняем базовые размеры ячейки
-    const baseCellSize = 60; // Базовый размер ячейки в пикселях
+    const baseCellSize = 60;
     const scaledCellSize = baseCellSize * state.zoom;
     
     // Устанавливаем реальные размеры для таблицы
     table.style.gap = `${4 * state.zoom}px`;
-    table.style.width = 'auto'; // Сбрасываем фиксированную ширину
+    table.style.width = 'auto';
     
     // Обновляем размеры всех ячеек
     const cells = table.querySelectorAll('.element, .table-cell.empty');
     cells.forEach(cell => {
         cell.style.minWidth = `${scaledCellSize}px`;
         cell.style.minHeight = `${scaledCellSize}px`;
-        cell.style.fontSize = `${16 * state.zoom}px`;
     });
     
     // Обновляем размеры символов и номеров
@@ -939,9 +850,6 @@ function updateZoom() {
     
     // Обновляем размеры контейнера
     adjustContainerSize();
-    
-    // Показываем текущий масштаб
-    showZoomIndicator(`${Math.round(state.zoom * 100)}%`);
     
     console.log('Масштаб обновлен:', state.zoom, 'Размер ячейки:', scaledCellSize);
 }
@@ -961,25 +869,14 @@ function adjustContainerSize() {
     // Устанавливаем минимальную высоту контейнера
     container.style.minHeight = `${Math.max(400, scaledHeight)}px`;
     
-    // ОСНОВНОЕ ИСПРАВЛЕНИЕ: Автоматически включаем скролл при необходимости
+    // Включаем скролл при необходимости
     container.style.overflowX = scaledWidth > container.clientWidth ? 'auto' : 'hidden';
     container.style.overflowY = 'auto';
     
-    // Также обновим ширину контейнера для лучшего отображения
+    // Обновляем выравнивание
     if (scaledWidth > container.clientWidth) {
-        container.style.justifyContent = 'flex-start'; // Выравнивание влево при скролле
+        container.style.justifyContent = 'flex-start';
     } else {
-        container.style.justifyContent = 'center'; // Центрирование если помещается
+        container.style.justifyContent = 'center';
     }
-    
-    console.log('Размеры контейнера обновлены:', {
-        containerWidth: container.clientWidth,
-        tableWidth: scaledWidth,
-        containerHeight: container.clientHeight,
-        tableHeight: scaledHeight,
-        overflowX: container.style.overflowX
-    });
 }
-
-// Сообщение о готовности
-console.log('Таблица Менделеева инициализирована');
