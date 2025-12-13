@@ -424,48 +424,18 @@ function showElementInfo(element) {
     // Показываем панель информации
     infoPanel.classList.add('active');
     
-    // ВАЖНО: Используем ID или конкретные селекторы для каждого элемента
-    // Исправляем селекторы - ищем элементы внутри панели информации
-    
     // Обновляем основную информацию в карточке элемента
     const symbolLarge = infoPanel.querySelector('.element-symbol-large');
-    const nameElement = infoPanel.querySelector('.element-name'); // В карточке
-    const numberElement = infoPanel.querySelector('.element-card-large .element-number'); // В карточке
-    const massElement = infoPanel.querySelector('.element-card-large .element-mass'); // В карточке
-    const categoryElement = infoPanel.querySelector('.element-card-large .element-category'); // В карточке
+    const nameElement = infoPanel.querySelector('.element-name');
+    const numberElement = infoPanel.querySelector('.element-card-large .element-number');
+    const massElement = infoPanel.querySelector('.element-card-large .element-mass');
+    const categoryElement = infoPanel.querySelector('.element-card-large .element-category');
     
-    console.log('Найденные элементы:', {
-        symbolLarge: !!symbolLarge,
-        nameElement: !!nameElement,
-        numberElement: !!numberElement,
-        massElement: !!massElement,
-        categoryElement: !!categoryElement
-    });
-    
-    if (symbolLarge) {
-        symbolLarge.textContent = element.symbol;
-        console.log('Установлен символ:', element.symbol);
-    }
-    
-    if (nameElement) {
-        nameElement.textContent = element.name;
-        console.log('Установлено название:', element.name);
-    }
-    
-    if (numberElement) {
-        numberElement.textContent = `Атомный номер: ${element.number}`;
-        console.log('Установлен номер:', element.number);
-    }
-    
-    if (massElement) {
-        massElement.textContent = `Атомная масса: ${element.mass || '--'}`;
-        console.log('Установлена масса:', element.mass);
-    }
-    
-    if (categoryElement) {
-        categoryElement.textContent = `Категория: ${getCategoryName(element.category)}`;
-        console.log('Установлена категория:', element.category);
-    }
+    if (symbolLarge) symbolLarge.textContent = element.symbol;
+    if (nameElement) nameElement.textContent = element.name;
+    if (numberElement) numberElement.textContent = `Атомный номер: ${element.number}`;
+    if (massElement) massElement.textContent = `Атомная масса: ${element.mass || '--'}`;
+    if (categoryElement) categoryElement.textContent = `Категория: ${getCategoryName(element.category)}`;
     
     // Обновляем вкладки
     const fundamentalEl = infoPanel.querySelector('#prop-fundamental');
@@ -474,40 +444,18 @@ function showElementInfo(element) {
     const historyEl = infoPanel.querySelector('#prop-history');
     const applicationsEl = infoPanel.querySelector('#prop-applications');
     
-    if (fundamentalEl) {
-        fundamentalEl.textContent = element.fundamental || 'Информация отсутствует';
-        console.log('Обновлена фундаментальная информация');
-    }
-    
-    if (propertiesEl) {
-        propertiesEl.textContent = element.properties || 'Информация отсутствует';
-        console.log('Обновлены свойства');
-    }
-    
-    if (reactionsEl) {
-        reactionsEl.textContent = element.reactions || 'Информация отсутствует';
-        console.log('Обновлены реакции');
-    }
-    
-    if (historyEl) {
-        historyEl.textContent = element.history || 'Информация отсутствует';
-        console.log('Обновлена история');
-    }
-    
-    if (applicationsEl) {
-        applicationsEl.textContent = element.applications || 'Информация отсутствует';
-        console.log('Обновлено применение');
-    }
+    if (fundamentalEl) fundamentalEl.textContent = element.fundamental || 'Информация отсутствует';
+    if (propertiesEl) propertiesEl.textContent = element.properties || 'Информация отсутствует';
+    if (reactionsEl) reactionsEl.textContent = element.reactions || 'Информация отсутствует';
+    if (historyEl) historyEl.textContent = element.history || 'Информация отсутствует';
+    if (applicationsEl) applicationsEl.textContent = element.applications || 'Информация отсутствует';
     
     // Обновляем цвет карточки
     const card = infoPanel.querySelector('.element-card-large');
     if (card) {
-        // Удаляем все классы категорий
         card.className = 'element-card-large';
-        // Добавляем класс текущей категории
         card.classList.add(element.category);
         if (element.isRadioactive) card.classList.add('radioactive');
-        console.log('Обновлен цвет карточки:', element.category);
     }
     
     // Активируем первую вкладку
@@ -524,6 +472,7 @@ function showElementInfo(element) {
     
     console.log('Информация об элементе успешно обновлена');
 }
+
 // Название категории
 function getCategoryName(category) {
     const names = {
@@ -673,7 +622,7 @@ ${element.fundamental}`;
     console.log('Обработчики событий настроены');
 }
 
-// НОВАЯ ФУНКЦИЯ: Управление панелью масштаба
+// Управление панелью масштаба
 function setupZoomControls() {
     console.log('Настройка управления масштабом...');
     
@@ -687,19 +636,11 @@ function setupZoomControls() {
         return;
     }
     
-    console.log('Найдены элементы:', {
-        zoomControlBtn: !!zoomControlBtn,
-        zoomSliderContainer: !!zoomSliderContainer,
-        closeZoomSliderBtn: !!closeZoomSliderBtn,
-        zoomSlider: !!zoomSlider
-    });
-    
     // Флаг состояния панели
     let isZoomPanelOpen = false;
     
     // Функция открытия панели
     function openZoomPanel() {
-        console.log('Открытие панели масштаба');
         zoomSliderContainer.classList.add('show');
         isZoomPanelOpen = true;
         
@@ -711,19 +652,13 @@ function setupZoomControls() {
     
     // Функция закрытия панели
     function closeZoomPanel() {
-        console.log('Закрытие панели масштаба');
         zoomSliderContainer.classList.remove('show');
         isZoomPanelOpen = false;
-        
-        // Удаляем обработчик
         document.removeEventListener('click', handleOutsideClick);
     }
     
     // Обработчик клика вне панели
     function handleOutsideClick(e) {
-        console.log('Клик вне панели', e.target);
-        
-        // Проверяем, был ли клик вне панели и не на кнопке масштаба
         if (!zoomSliderContainer.contains(e.target) && 
             e.target !== zoomControlBtn && 
             !zoomControlBtn.contains(e.target)) {
@@ -733,7 +668,6 @@ function setupZoomControls() {
     
     // Обработчик для кнопки масштаба
     zoomControlBtn.addEventListener('click', function(e) {
-        console.log('Клик на кнопку масштаба');
         e.stopPropagation();
         
         if (isZoomPanelOpen) {
@@ -746,7 +680,6 @@ function setupZoomControls() {
     // Обработчик для кнопки закрытия
     if (closeZoomSliderBtn) {
         closeZoomSliderBtn.addEventListener('click', function(e) {
-            console.log('Клик на кнопку закрытия');
             e.stopPropagation();
             closeZoomPanel();
         });
@@ -754,7 +687,6 @@ function setupZoomControls() {
     
     // Обработчик для ползунка масштаба
     if (zoomSlider) {
-        // Устанавливаем начальное значение
         zoomSlider.value = state.zoom * 100;
         
         zoomSlider.addEventListener('input', function(e) {
@@ -954,6 +886,7 @@ function updateStats() {
     if (totalElement) totalElement.textContent = total;
     if (filteredElement) filteredElement.textContent = filtered;
 }
+
 // Обновление масштаба
 function updateZoom() {
     const table = document.getElementById('periodic-table');
@@ -999,30 +932,6 @@ function adjustContainerSize() {
         container.style.overflowX = 'auto';
     } else {
         container.style.overflowX = 'hidden';
-    }
-}
-
-// Обновление отступов таблицы
-function updateTableMargins() {
-    const table = document.querySelector('.periodic-table');
-    const container = document.querySelector('.container');
-    
-    if (!table || !container) return;
-    
-    // Рассчитываем необходимые отступы
-    const scaleFactor = state.zoom;
-    const baseWidth = 1200; // Базовая ширина таблицы
-    const scaledWidth = baseWidth * scaleFactor;
-    
-    // Если таблица шире контейнера, добавляем горизонтальный скролл
-    if (scaledWidth > container.clientWidth) {
-        table.style.overflowX = 'auto';
-        table.style.maxWidth = '100%';
-        table.style.margin = '0 auto';
-    } else {
-        table.style.overflowX = 'visible';
-        table.style.maxWidth = `${scaledWidth}px`;
-        table.style.margin = '0 auto';
     }
 }
 
