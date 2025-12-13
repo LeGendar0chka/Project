@@ -189,30 +189,30 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Контейнер для таблицы - ИСПРАВЛЕНО */
 /* Контейнер для таблицы - ОБНОВЛЕНО */
 .table-container {
     position: relative;
     width: 100%;
-    max-width: 100vw; /* На всю ширину экрана */
+    max-width: 100vw;
     margin: 0 auto 20px;
     padding: 15px;
     background: var(--card-bg);
     border-radius: 15px;
     box-shadow: 0 4px 6px var(--shadow);
-    overflow: auto; /* Скролл во всех направлениях */
+    overflow: auto;
     min-height: 600px;
-    display: block; /* Меняем flex на block */
-}
-.periodic-table {
-    display: grid;
-    grid-template-columns: repeat(18, minmax(30px, 1fr)); /* Гибкие колонки */
-    gap: 4px;
-    transition: all 0.3s ease;
-    width: auto; /* Автоматическая ширина */
-    margin: 0 auto;
+    display: block;
 }
 
+/* Таблица Менделеева - ОБНОВЛЕНО */
+.periodic-table {
+    display: grid;
+    grid-template-columns: repeat(18, minmax(30px, 1fr));
+    gap: 4px;
+    transition: all 0.3s ease;
+    width: auto;
+    margin: 0 auto;
+}
 
 /* Элементы таблицы - ОБНОВЛЕНО */
 .element, .table-cell.empty {
@@ -228,7 +228,7 @@ body {
     font-weight: bold;
     position: relative;
     border: 2px solid transparent;
-    min-width: 60px; /* Базовый размер */
+    min-width: 60px;
     min-height: 60px;
     box-sizing: border-box;
 }
@@ -766,23 +766,29 @@ body {
     font-style: italic;
 }
 
-/* Адаптивность */
+/* Адаптивность - ПОЛНЫЕ ИСПРАВЛЕННЫЕ ВЕРСИИ */
 @media (max-width: 768px) {
     .header h1 {
         font-size: 1.2rem;
     }
 
     .periodic-table {
-        grid-template-columns: repeat(18, 35px);
+        grid-template-columns: repeat(18, minmax(25px, 1fr));
         gap: 3px;
     }
 
+    .element, .table-cell.empty {
+        min-width: 35px;
+        min-height: 35px;
+        padding: 2px;
+    }
+
     .element-symbol {
-        font-size: 14px;
+        font-size: 14px !important;
     }
 
     .element-number {
-        font-size: 9px;
+        font-size: 9px !important;
     }
 
     .tab-btn {
@@ -804,6 +810,8 @@ body {
     .table-container {
         padding: 10px;
         min-height: 400px;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 
     /* Панель масштаба на мобильных */
@@ -849,12 +857,18 @@ body {
 
 @media (max-width: 480px) {
     .periodic-table {
-        grid-template-columns: repeat(18, 30px);
+        grid-template-columns: repeat(18, minmax(20px, 1fr));
         gap: 2px;
     }
 
+    .element, .table-cell.empty {
+        min-width: 30px;
+        min-height: 30px;
+        padding: 1px;
+    }
+
     .element-symbol {
-        font-size: 12px;
+        font-size: 12px !important;
     }
 
     .header h1 {
@@ -872,6 +886,8 @@ body {
     .table-container {
         padding: 5px;
         min-height: 300px;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
     }
 
     .zoom-dropdown-content {
