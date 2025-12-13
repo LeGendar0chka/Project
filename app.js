@@ -353,12 +353,21 @@ function addRowLabels() {
 }
 
 // Выбор элемента
+// Выбор элемента
 function selectElement(element) {
-    console.log('Выбран элемент:', element.number, element.symbol, element.name);
+    console.log('=== ВЫБОР ЭЛЕМЕНТА ===');
+    console.log('Элемент:', element.number, element.symbol, element.name);
+    console.log('Данные элемента:', {
+        number: element.number,
+        symbol: element.symbol,
+        name: element.name,
+        mass: element.mass,
+        category: element.category
+    });
     
     state.selectedElement = element;
     
-    // Обновляем UI
+    // Обновляем UI - выделяем выбранный элемент
     document.querySelectorAll('.element').forEach(el => {
         el.classList.remove('selected');
     });
@@ -366,14 +375,30 @@ function selectElement(element) {
     const selectedEl = document.querySelector(`.element[data-number="${element.number}"]`);
     if (selectedEl) {
         selectedEl.classList.add('selected');
-        selectedEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        console.log('Элемент выделен в таблице');
+        
+        // Прокручиваем к элементу (опционально)
+        selectedEl.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center', 
+            inline: 'center' 
+        });
+    } else {
+        console.error('Элемент не найден в DOM:', element.number);
     }
     
     // Показываем информацию
+    console.log('Вызываем showElementInfo...');
     showElementInfo(element);
     
     // Обновляем статистику
-    document.getElementById('selected-element').textContent = element.symbol;
+    const selectedElementSpan = document.getElementById('selected-element');
+    if (selectedElementSpan) {
+        selectedElementSpan.textContent = element.symbol;
+        console.log('Статистика обновлена:', element.symbol);
+    }
+    
+    console.log('=== ВЫБОР ЭЛЕМЕНТА ЗАВЕРШЕН ===');
 }
 
 // Показать информацию об элементе
