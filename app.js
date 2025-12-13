@@ -673,7 +673,7 @@ ${element.fundamental}`;
     console.log('Обработчики событий настроены');
 }
 
-// Управление масштабом через ползунок
+// НОВАЯ ФУНКЦИЯ: Управление панелью масштаба
 function setupZoomControls() {
     const zoomControlBtn = document.getElementById('zoom-control');
     const sliderContainer = document.getElementById('zoom-slider-container');
@@ -685,11 +685,41 @@ function setupZoomControls() {
         return;
     }
     
-    // Переменная для отслеживания состояния панели
+    // Состояние панели
     let isZoomPanelOpen = false;
-    let closeTimeout = null;
     
-    // Открытие/закрытие панели масштаба
+    // Функция для открытия панели
+    function openZoomPanel() {
+        if (isZoomPanelOpen) return;
+        
+        sliderContainer.classList.add('show');
+        isZoomPanelOpen = true;
+        
+        // Добавляем обработчик для закрытия при клике вне панели
+        setTimeout(() => {
+            document.addEventListener('click', handleOutsideClick);
+        }, 10);
+    }
+    
+    // Функция для закрытия панели
+    function closeZoomPanel() {
+        if (!isZoomPanelOpen) return;
+        
+        sliderContainer.classList.remove('show');
+        isZoomPanelOpen = false;
+        
+        // Удаляем обработчик
+        document.removeEventListener('click', handleOutsideClick);
+    }
+    
+    // Обработчик клика вне панели
+    function handleOutsideClick(e) {
+        if (!sliderContainer.contains(e.target) && e.target !== zoomControlBtn) {
+            closeZoomPanel();
+        }
+    }
+    
+    // Обработчик для кнопки масштаба
     zoomControlBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         
@@ -700,7 +730,7 @@ function setupZoomControls() {
         }
     });
     
-    // Закрытие кнопкой закрытия
+    // Обработчик для кнопки закрытия
     if (closeZoomSliderBtn) {
         closeZoomSliderBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -708,25 +738,19 @@ function setupZoomControls() {
         });
     }
     
-    // Ползунок масштаба
+    // Обработчик для ползунка
     if (zoomSlider) {
-        // Инициализируем ползунок текущим значением
         zoomSlider.value = state.zoom * 100;
         
         zoomSlider.addEventListener('input', function(e) {
             e.stopPropagation();
             state.zoom = this.value / 100;
             updateZoom();
-            
-            // Показать индикатор
             showZoomIndicator(`${this.value}%`);
-            
-            // Сбрасываем таймер закрытия при взаимодействии
-            resetCloseTimer();
         });
     }
     
-    // Пресеты масштаба
+    // Обработчики для пресетов масштаба
     document.querySelectorAll('.zoom-preset-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -734,91 +758,26 @@ function setupZoomControls() {
             state.zoom = zoomValue;
             updateZoom();
             
-            // Обновить ползунок
             if (zoomSlider) {
                 zoomSlider.value = zoomValue * 100;
             }
             
-            // Показать сообщение
             showZoomIndicator(`${zoomValue * 100}%`);
-            
-            // Сбрасываем таймер закрытия
-            resetCloseTimer();
         });
     });
     
-    // Кнопка сброса
+    // Обработчик для кнопки сброса
     document.getElementById('reset-view')?.addEventListener('click', function(e) {
         e.stopPropagation();
         state.zoom = 1.0;
         updateZoom();
         
-        // Обновить ползунок
         if (zoomSlider) {
             zoomSlider.value = 100;
         }
         
-        // Показать сообщение
         showZoomIndicator('100%');
-        
-        // Сбрасываем таймер закрытия
-        resetCloseTimer();
     });
-    
-    // Закрытие панели при клике вне ее
-    document.addEventListener('click', function(e) {
-        if (isZoomPanelOpen && 
-            !sliderContainer.contains(e.target) && 
-            e.target !== zoomControlBtn && 
-            !zoomControlBtn.contains(e.target)) {
-            closeZoomPanel();
-        }
-    });
-    
-    // Закрытие панели при нажатии Escape
-    document.addEventListener('keydown', function(e) {
-        if (isZoomPanelOpen && e.key === 'Escape') {
-            closeZoomPanel();
-        }
-    });
-    
-    // Функции открытия/закрытия панели
-    function openZoomPanel() {
-        sliderContainer.classList.add('show');
-        isZoomPanelOpen = true;
-        
-        // Устанавливаем таймер автоматического закрытия через 5 секунд бездействия
-        startCloseTimer();
-    }
-    
-    function closeZoomPanel() {
-        sliderContainer.classList.remove('show');
-        isZoomPanelOpen = false;
-        
-        // Очищаем таймер
-        if (closeTimeout) {
-            clearTimeout(closeTimeout);
-            closeTimeout = null;
-        }
-    }
-    
-    function startCloseTimer() {
-        // Очищаем предыдущий таймер
-        if (closeTimeout) {
-            clearTimeout(closeTimeout);
-        }
-        
-        // Устанавливаем новый таймер на 5 секунд
-        closeTimeout = setTimeout(() => {
-            if (isZoomPanelOpen) {
-                closeZoomPanel();
-            }
-        }, 5000);
-    }
-    
-    function resetCloseTimer() {
-        startCloseTimer();
-    }
 }
 
 // Функция показа индикатора масштаба
