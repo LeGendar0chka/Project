@@ -631,17 +631,6 @@ ${element.fundamental}`;
         });
     }
     
-// В функции setupEventListeners обновите обработчики:
-
-document.getElementById('zoom-in')?.addEventListener('click', function() {
-    if (state.zoom < 2.0) {
-        state.zoom += 0.1;
-        updateZoom();
-        
-        // Показать текущий масштаб
-        Telegram.WebApp.showAlert(`Масштаб: ${Math.round(state.zoom * 100)}%`);
-    }
-});
 // Добавьте эти обработчики в функцию setupEventListeners:
 
 // Управление масштабом через ползунок
@@ -739,15 +728,6 @@ function updateZoomSlider() {
         zoomSlider.value = state.zoom * 100;
     }
 }
-document.getElementById('zoom-out')?.addEventListener('click', function() {
-    if (state.zoom > 0.5) {
-        state.zoom -= 0.1;
-        updateZoom();
-        
-        // Показать текущий масштаб
-        Telegram.WebApp.showAlert(`Масштаб: ${Math.round(state.zoom * 100)}%`);
-    }
-});
 
 document.getElementById('reset-view')?.addEventListener('click', function() {
     state.zoom = 1.0;
