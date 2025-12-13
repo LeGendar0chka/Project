@@ -113,18 +113,20 @@
 
         <!-- Быстрые действия -->
         <div class="quick-actions">
-            <button id="show-all" class="quick-btn">
-                <i class="fas fa-expand"></i> Показать все
-            </button>
+            <!-- УДАЛИЛ ДУБЛИРУЮЩУЮ КНОПКУ "Показать все" -->
             
             <!-- Кнопка масштаба с выпадающим меню -->
             <div class="zoom-dropdown">
                 <button id="zoom-control" class="quick-btn">
                     <i class="fas fa-search"></i> Масштаб <i class="fas fa-caret-down"></i>
                 </button>
-                <div class="zoom-dropdown-content" id="zoom-dropdown">
+                <div class="zoom-dropdown-content" id="zoom-slider-container">
+                    <!-- ИСПРАВИЛ ID и ДОБАВИЛ КНОПКУ ЗАКРЫТИЯ -->
                     <div class="zoom-dropdown-header">
                         <span>Масштабирование</span>
+                        <button id="close-zoom-slider">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     <div class="zoom-presets">
                         <button class="zoom-preset-btn" data-zoom="0.5">50%</button>
