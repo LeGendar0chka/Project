@@ -888,6 +888,7 @@ function updateStats() {
 }
 
 // Обновление масштаба
+// Обновление масштаба - ПЕРЕРАБОТАННАЯ ВЕРСИЯ
 function updateZoom() {
     const table = document.getElementById('periodic-table');
     const container = document.getElementById('table-container');
@@ -900,17 +901,40 @@ function updateZoom() {
     // Ограничиваем масштаб
     state.zoom = Math.max(0.5, Math.min(2.0, state.zoom));
     
-    // Применяем масштаб ТОЛЬКО к таблице
-    table.style.transform = `scale(${state.zoom})`;
-    table.style.transformOrigin = 'center top';
+    // Сохраняем базовые размеры ячейки
+    const baseCellSize = 60; // Базовый размер ячейки в пикселях
+    const scaledCellSize = baseCellSize * state.zoom;
     
-    // Обновляем размеры контейнера при необходимости
+    // Устанавливаем реальные размеры для таблицы
+    table.style.gap = `${4 * state.zoom}px`;
+    table.style.width = 'auto'; // Сбрасываем фиксированную ширину
+    
+    // Обновляем размеры всех ячеек
+    const cells = table.querySelectorAll('.element, .table-cell.empty');
+    cells.forEach(cell => {
+        cell.style.minWidth = `${scaledCellSize}px`;
+        cell.style.minHeight = `${scaledCellSize}px`;
+        cell.style.fontSize = `${16 * state.zoom}px`;
+    });
+    
+    // Обновляем размеры символов и номеров
+    const symbols = table.querySelectorAll('.element-symbol');
+    symbols.forEach(symbol => {
+        symbol.style.fontSize = `${16 * state.zoom}px`;
+    });
+    
+    const numbers = table.querySelectorAll('.element-number');
+    numbers.forEach(number => {
+        number.style.fontSize = `${10 * state.zoom}px`;
+    });
+    
+    // Обновляем размеры контейнера
     adjustContainerSize();
     
     // Показываем текущий масштаб
     showZoomIndicator(`${Math.round(state.zoom * 100)}%`);
     
-    console.log('Масштаб обновлен:', state.zoom);
+    console.log('Масштаб обновлен:', state.zoom, 'Размер ячейки:', scaledCellSize);
 }
 
 // Настройка размера контейнера
