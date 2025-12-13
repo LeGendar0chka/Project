@@ -568,7 +568,13 @@ function setupEventListeners() {
             filterElements();
         });
     }
+       // Настройка контроля масштаба
+    setupZoomControls();
     
+    // Обработка изменения размера окна
+    window.addEventListener('resize', () => {
+        adjustContainerSize();
+    });
     // Фильтры
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -645,7 +651,6 @@ ${element.fundamental}`;
         });
     }
     
-// Добавьте эти обработчики в функцию setupEventListeners:
 
 // Управление масштабом через ползунок
 document.getElementById('zoom-control')?.addEventListener('click', function() {
