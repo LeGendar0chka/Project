@@ -834,19 +834,152 @@ function updateStats() {
 }
 // Обновление масштаба
 function updateZoom() {
-    const table = document.querySelector('.periodic-table');
-    if (table) {
-        // Ограничиваем масштаб
-        state.zoom = Math.max(0.5, Math.min(2.0, state.zoom));
-        
-        // Применяем трансформацию
-        table.style.transform = `scale(${state.zoom})`;
-        table.style.transformOrigin = 'top center';
-        
-        // Обновляем отступы для предотвращения перекрытия
-        updateTableMargins();
-        
-        console.log('Масштаб обновлен:', state.zoom);
+    const table = document.getElementById('periodic-table');
+    const container = document.getElementById('table-container');
+    
+    if (!table || !container) {
+        console.error('Элементы таблицы не найдены');
+        return;
+    }
+    
+    // Ограничиваем масштаб
+    state.zoom = Math.max(0.5, Math.min(2.0, state.zoom));
+    
+    // Применяем масштаб ТОЛЬКО к таблице
+    table.style.transform = `scale(${state.zoom})`;
+    table.style.transformOrigin = 'center top';
+    
+    // Обновляем размеры контейнера при необходимости
+    adjustContainerSize();
+    
+    // Обновляем состояние кнопок
+    updateZoomButtons();
+    
+    // Показываем текущий масштаб
+    showZoomIndicator(`${Math.round(state.zoom * 100)}%`);
+    
+    console.log('Масштаб обновлен:', state.zoom);
+}
+
+// Настройка размера контейнера
+function adjustContainerSize() {
+    const table = document.getElementById('periodic-table');
+    const container = document.getElementById('table-container');
+    
+    if (!table || !container) return;
+    
+    // Получаем реальные размеры таблицы
+    const tableRect = table.getBoundingClientRect();
+    const scaledHeight = tableRect.height;
+    
+    // Устанавливаем минимальную высоту контейнера
+    container.style.minHeight = `${Math.max(400, scaledHeight)}px`;
+    
+    // Если таблица слишком широкая, добавляем горизонтальный скролл
+    if (tableRect.width > container.clientWidth) {
+        container.style.overflowX = 'auto';
+    } else {
+        container.style.overflowX = 'hidden';
+    }
+}
+
+// Обновление состояния кнопок масштаба
+function updateZoomButtons() {
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    
+    if (zoomInBtn) {
+        zoomInBtn.disabled = state.zoom >= 2.0;
+        zoomInBtn.style.opacity = zoomInBtn.disabled ? '0.5' : '1';
+        zoomInBtn.style.cursor = zoomInBtn.disabled ? 'not-allowed' : 'pointer';
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.disabled = state.zoom <= 0.5;
+        zoomOutBtn.style.opacity = zoomOutBtn.disabled ? '0.5' : '1';
+        zoomOutBtn.style.cursor = zoomOutBtn.disabled ? 'not-allowed' : 'pointer';
+    }
+}
+
+// Функция показа индикатора масштаба
+function showZoomIndicator(text) {
+    // Удаляем старый индикатор, если есть
+    const oldIndicator = document.getElementById('zoom-temp-indicator');
+    if (oldIndicator) {
+        oldIndicator.remove();
+    }
+    
+    // Создаем новый индикатор
+    const indicator = document.createElement('div');
+    indicator.id = 'zoom-temp-indicator';
+    indicator.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: opacity 0.3s ease;
+    `;
+    indicator.textContent = `Масштаб: ${text}`;
+    
+    document.body.appendChild(indicator);
+    
+    // Показываем с анимацией
+    requestAnimationFrame(() => {
+        indicator.style.opacity = '1';
+    });
+    
+    // Скрываем через 1 секунду
+    setTimeout(() => {
+        indicator.style.opacity = '0';
+        setTimeout(() => {
+            if (indicator.parentNode) {
+                indicator.parentNode.removeChild(indicator);
+            }
+        }, 300);
+    }, 1000);
+}
+
+// Упрощенный контроль масштаба
+function setupZoomControls() {
+    // Увеличить
+    document.getElementById('zoom-in')?.addEventListener('click', function() {
+        if (!this.disabled) {
+            state.zoom += 0.1;
+            updateZoom();
+        }
+    });
+    
+    // Уменьшить
+    document.getElementById('zoom-out')?.addEventListener('click', function() {
+        if (!this.disabled) {
+            state.zoom -= 0.1;
+            updateZoom();
+        }
+    });
+    
+    // Сбросить
+    document.getElementById('reset-view')?.addEventListener('click', function() {
+        state.zoom = 1.0;
+        updateZoom();
+    });
+    
+    // Ползунок масштаба (если есть)
+    const zoomSlider = document.getElementById('zoom-slider');
+    if (zoomSlider) {
+        zoomSlider.addEventListener('input', function() {
+            state.zoom = this.value / 100;
+            updateZoom();
+        });
     }
 }
 
@@ -877,20 +1010,5 @@ function updateTableMargins() {
     updateZoomButtons();
 }
 
-// Обновление состояния кнопок масштаба
-function updateZoomButtons() {
-    const zoomInBtn = document.getElementById('zoom-in');
-    const zoomOutBtn = document.getElementById('zoom-out');
-    
-    if (zoomInBtn) {
-        zoomInBtn.disabled = state.zoom >= 2.0;
-        zoomInBtn.style.opacity = state.zoom >= 2.0 ? '0.5' : '1';
-    }
-    
-    if (zoomOutBtn) {
-        zoomOutBtn.disabled = state.zoom <= 0.5;
-        zoomOutBtn.style.opacity = state.zoom <= 0.5 ? '0.5' : '1';
-    }
-}
 // Сообщение о готовности
 console.log('Таблица Менделеева инициализирована');
