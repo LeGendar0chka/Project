@@ -187,7 +187,6 @@ body {
     0% {
         transform: rotate(0deg);
     }
-
     100% {
         transform: rotate(360deg);
     }
@@ -324,11 +323,9 @@ body {
     0% {
         opacity: 1;
     }
-
     50% {
         opacity: 0.7;
     }
-
     100% {
         opacity: 1;
     }
@@ -538,7 +535,7 @@ body {
     border-color: var(--primary);
 }
 
-/* Выпадающее меню масштаба */
+/* ВЫПАДАЮЩЕЕ МЕНЮ МАСШТАБА - ИСПРАВЛЕННОЕ */
 .zoom-dropdown {
     position: relative;
     display: inline-block;
@@ -556,19 +553,55 @@ body {
     z-index: 1000;
     padding: 15px;
     margin-bottom: 10px;
+    border: 2px solid var(--border);
 }
 
-.zoom-dropdown:hover .zoom-dropdown-content {
+/* УБРАЛИ HOVER-ЭФФЕКТ и добавили класс для показа */
+.zoom-dropdown-content.show {
     display: block;
+    animation: zoomPanelFadeIn 0.3s ease-out;
+}
+
+@keyframes zoomPanelFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .zoom-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 12px;
     padding-bottom: 8px;
     border-bottom: 2px solid var(--border);
     font-weight: bold;
     color: var(--primary);
     font-size: 14px;
+}
+
+#close-zoom-slider {
+    background: none;
+    border: none;
+    color: var(--secondary);
+    cursor: pointer;
+    font-size: 18px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+#close-zoom-slider:hover {
+    background: var(--border);
 }
 
 /* Пресеты масштаба */
@@ -732,7 +765,6 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -779,6 +811,7 @@ body {
         min-height: 400px;
     }
 
+    /* Адаптивность для панели масштаба на мобильных */
     .zoom-dropdown-content {
         position: fixed;
         bottom: 70px;
@@ -787,6 +820,21 @@ body {
         width: 90%;
         max-width: 300px;
         min-width: auto;
+    }
+
+    .zoom-dropdown-content.show {
+        animation: zoomPanelMobileFadeIn 0.3s ease-out;
+    }
+
+    @keyframes zoomPanelMobileFadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
     }
 
     .zoom-presets {
@@ -830,4 +878,32 @@ body {
         padding: 5px;
         min-height: 300px;
     }
+
+    .zoom-dropdown-content {
+        width: 95%;
+        max-width: 280px;
+    }
+
+    .zoom-presets {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Overlay для панели масштаба (опционально, для модального эффекта) */
+#zoom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#zoom-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
 }
