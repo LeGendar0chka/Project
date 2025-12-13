@@ -112,20 +112,37 @@
     </div>
 </div>
 
-       <!-- Быстрые действия -->
+      <!-- Быстрые действия -->
 <div class="quick-actions">
     <button id="show-all" class="quick-btn">
         <i class="fas fa-expand"></i> Показать все
     </button>
-    <button id="zoom-out" class="quick-btn">
-        <i class="fas fa-search-minus"></i> Уменьшить
-    </button>
-    <button id="zoom-in" class="quick-btn">
-        <i class="fas fa-search-plus"></i> Увеличить
-    </button>
-    <button id="zoom-control" class="quick-btn">
-        <i class="fas fa-sliders-h"></i> Масштаб
-    </button>
+    
+    <!-- Кнопка масштаба с выпадающим меню -->
+    <div class="zoom-dropdown">
+        <button id="zoom-control" class="quick-btn">
+            <i class="fas fa-search"></i> Масштаб <i class="fas fa-caret-down"></i>
+        </button>
+        <div class="zoom-dropdown-content" id="zoom-dropdown">
+            <div class="zoom-dropdown-header">
+                <span>Масштабирование</span>
+            </div>
+            <div class="zoom-presets">
+                <button class="zoom-preset-btn" data-zoom="0.5">50%</button>
+                <button class="zoom-preset-btn" data-zoom="0.75">75%</button>
+                <button class="zoom-preset-btn active" data-zoom="1.0">100%</button>
+                <button class="zoom-preset-btn" data-zoom="1.25">125%</button>
+                <button class="zoom-preset-btn" data-zoom="1.5">150%</button>
+                <button class="zoom-preset-btn" data-zoom="1.75">175%</button>
+                <button class="zoom-preset-btn" data-zoom="2.0">200%</button>
+            </div>
+            <div class="zoom-slider-container">
+                <input type="range" min="50" max="200" value="100" class="zoom-slider" id="zoom-slider">
+                <span class="zoom-value" id="zoom-value">100%</span>
+            </div>
+        </div>
+    </div>
+    
     <button id="reset-view" class="quick-btn">
         <i class="fas fa-redo"></i> Сбросить
     </button>
@@ -133,7 +150,6 @@
 
 <!-- Индикатор масштаба -->
 <div class="zoom-indicator" id="zoom-indicator"></div>
-
 <!-- Панель управления масштабом -->
 <div class="zoom-slider-container" id="zoom-slider-container">
     <div class="zoom-slider-header">
