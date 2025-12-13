@@ -219,6 +219,7 @@ function showLoading(show) {
 }
 
 // Инициализация таблицы
+// Инициализация таблицы - ОБНОВЛЕННАЯ ВЕРСИЯ
 function initializeTable() {
     console.log('Инициализация таблицы...');
     
@@ -235,15 +236,22 @@ function initializeTable() {
     // Базовый размер ячейки
     const baseCellSize = 60;
     
-    // Создаем сетку 9×18
+    // Создаем сетку 9×18 с фиксированными размерами
     for (let row = 1; row <= 9; row++) {
         for (let col = 1; col <= 18; col++) {
             const cell = document.createElement('div');
             cell.className = 'table-cell empty';
             cell.style.gridRow = row;
             cell.style.gridColumn = col;
+            
+            // ФИКСИРОВАННЫЕ размеры
+            cell.style.width = `${baseCellSize}px`;
+            cell.style.height = `${baseCellSize}px`;
             cell.style.minWidth = `${baseCellSize}px`;
             cell.style.minHeight = `${baseCellSize}px`;
+            cell.style.maxWidth = `${baseCellSize}px`;
+            cell.style.maxHeight = `${baseCellSize}px`;
+            
             table.appendChild(cell);
         }
     }
@@ -254,9 +262,6 @@ function initializeTable() {
         const pos = elementPositions[element.number];
         if (pos) {
             const elementDiv = createElementDiv(element, pos);
-            // Устанавливаем базовые размеры
-            elementDiv.style.minWidth = `${baseCellSize}px`;
-            elementDiv.style.minHeight = `${baseCellSize}px`;
             table.appendChild(elementDiv);
             addedElements++;
         }
@@ -267,9 +272,46 @@ function initializeTable() {
     
     // Показываем таблицу
     table.style.display = 'grid';
-    table.style.width = 'auto'; // Важно: авто-ширина
+    
+    // Инициализируем размеры контейнера
+    setTimeout(() => {
+        adjustContainerSize();
+    }, 100);
     
     console.log(`Таблица инициализирована. Элементов: ${addedElements}`);
+}
+
+// Создание элемента таблицы - ОБНОВЛЕННАЯ ВЕРСИЯ
+function createElementDiv(element, position) {
+    const div = document.createElement('div');
+    div.className = `element ${element.category} ${element.isRadioactive ? 'radioactive' : ''}`;
+    div.dataset.number = element.number;
+    div.dataset.symbol = element.symbol;
+    div.dataset.category = element.category;
+    
+    div.style.gridRow = position.row;
+    div.style.gridColumn = position.col;
+    
+    // ФИКСИРОВАННЫЕ размеры
+    div.style.width = '60px';
+    div.style.height = '60px';
+    div.style.minWidth = '60px';
+    div.style.minHeight = '60px';
+    div.style.maxWidth = '60px';
+    div.style.maxHeight = '60px';
+    
+    div.innerHTML = `
+        <div class="element-number">${element.number}</div>
+        <div class="element-symbol">${element.symbol}</div>
+        <div class="element-name">${element.name}</div>
+    `;
+    
+    div.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectElement(element);
+    });
+    
+    return div;
 }
 
 // Создание элемента таблицы
