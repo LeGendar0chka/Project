@@ -631,37 +631,35 @@ ${element.fundamental}`;
         });
     }
     
-    // Быстрые действия
-    document.getElementById('show-all')?.addEventListener('click', function() {
-        state.currentFilter = 'all';
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-        if (allBtn) allBtn.classList.add('active');
-        filterElements();
-    });
-    
-    document.getElementById('reset-view')?.addEventListener('click', function() {
-        state.zoom = 1;
-        state.searchTerm = '';
-        state.currentFilter = 'all';
-        const searchInput = document.getElementById('search');
-        if (searchInput) searchInput.value = '';
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-        if (allBtn) allBtn.classList.add('active');
-        filterElements();
+// В функции setupEventListeners обновите обработчики:
+
+document.getElementById('zoom-in')?.addEventListener('click', function() {
+    if (state.zoom < 2.0) {
+        state.zoom += 0.1;
         updateZoom();
-    });
-    
-    document.getElementById('zoom-in')?.addEventListener('click', function() {
-        if (state.zoom < 1.5) state.zoom += 0.1;
+        
+        // Показать текущий масштаб
+        Telegram.WebApp.showAlert(`Масштаб: ${Math.round(state.zoom * 100)}%`);
+    }
+});
+
+document.getElementById('zoom-out')?.addEventListener('click', function() {
+    if (state.zoom > 0.5) {
+        state.zoom -= 0.1;
         updateZoom();
-    });
+        
+        // Показать текущий масштаб
+        Telegram.WebApp.showAlert(`Масштаб: ${Math.round(state.zoom * 100)}%`);
+    }
+});
+
+document.getElementById('reset-view')?.addEventListener('click', function() {
+    state.zoom = 1.0;
+    updateZoom();
     
-    document.getElementById('zoom-out')?.addEventListener('click', function() {
-        if (state.zoom > 0.7) state.zoom -= 0.1;
-        updateZoom();
-    });
+    // Показать сообщение
+    Telegram.WebApp.showAlert('Масштаб сброшен до 100%');
+});
     
     // Смена темы
     const themeBtn = document.getElementById('toggle-theme');
