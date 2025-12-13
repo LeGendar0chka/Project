@@ -271,9 +271,6 @@ function initializeTable() {
     // Настраиваем размер контейнера
     adjustContainerSize();
     
-    // Настраиваем кнопки масштаба
-    updateZoomButtons();
-    
     console.log(`Таблица инициализирована. Элементов: ${addedElements}`);
 }
 
@@ -367,7 +364,6 @@ function addRowLabels() {
 }
 
 // Выбор элемента
-// Выбор элемента
 function selectElement(element) {
     console.log('=== ВЫБОР ЭЛЕМЕНТА ===');
     console.log('Элемент:', element.number, element.symbol, element.name);
@@ -415,7 +411,6 @@ function selectElement(element) {
     console.log('=== ВЫБОР ЭЛЕМЕНТА ЗАВЕРШЕН ===');
 }
 
-// Показать информацию об элементе
 // Показать информацию об элементе
 function showElementInfo(element) {
     console.log('Показываем информацию для элемента:', element.symbol, element.number);
@@ -568,6 +563,7 @@ function setupEventListeners() {
             filterElements();
         });
     }
+    
     // Настройка контроля масштаба
     setupZoomControls();
     
@@ -652,111 +648,6 @@ ${element.fundamental}`;
         });
     }
     
-
-// Управление масштабом через ползунок
-document.getElementById('zoom-control')?.addEventListener('click', function() {
-    const sliderContainer = document.getElementById('zoom-slider-container');
-    if (sliderContainer) {
-        sliderContainer.classList.toggle('show');
-    }
-});
-
-document.getElementById('close-zoom-slider')?.addEventListener('click', function() {
-    const sliderContainer = document.getElementById('zoom-slider-container');
-    if (sliderContainer) {
-        sliderContainer.classList.remove('show');
-    }
-});
-
-// Ползунок масштаба
-const zoomSlider = document.getElementById('zoom-slider');
-if (zoomSlider) {
-    zoomSlider.addEventListener('input', function() {
-        state.zoom = this.value / 100;
-        updateZoom();
-        
-        // Показать индикатор
-        showZoomIndicator(`${this.value}%`);
-    });
-    
-    zoomSlider.addEventListener('change', function() {
-        // Скрыть панель через 2 секунды
-        setTimeout(() => {
-            const sliderContainer = document.getElementById('zoom-slider-container');
-            if (sliderContainer) {
-                sliderContainer.classList.remove('show');
-            }
-        }, 2000);
-    });
-}
-
-// Пресеты масштаба
-document.querySelectorAll('.zoom-preset-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const zoomValue = parseFloat(this.dataset.zoom);
-        state.zoom = zoomValue;
-        updateZoom();
-        
-        // Обновить ползунок
-        if (zoomSlider) {
-            zoomSlider.value = zoomValue * 100;
-        }
-        
-        // Показать сообщение
-        showZoomIndicator(`${zoomValue * 100}%`);
-        
-        // Скрыть панель
-        setTimeout(() => {
-            const sliderContainer = document.getElementById('zoom-slider-container');
-            if (sliderContainer) {
-                sliderContainer.classList.remove('show');
-            }
-        }, 1000);
-    });
-});
-
-// Функция показа индикатора масштаба
-function showZoomIndicator(text) {
-    const indicator = document.getElementById('zoom-indicator');
-    if (indicator) {
-        indicator.textContent = `Масштаб: ${text}`;
-        indicator.classList.add('show');
-        
-        setTimeout(() => {
-            indicator.classList.remove('show');
-        }, 2000);
-    }
-}
-
-// Закрытие панели масштаба при клике вне ее
-document.addEventListener('click', function(e) {
-    const sliderContainer = document.getElementById('zoom-slider-container');
-    const zoomControlBtn = document.getElementById('zoom-control');
-    
-    if (sliderContainer && sliderContainer.classList.contains('show') &&
-        !sliderContainer.contains(e.target) &&
-        e.target !== zoomControlBtn &&
-        !zoomControlBtn?.contains(e.target)) {
-        sliderContainer.classList.remove('show');
-    }
-});
-
-// Обновляем ползунок при изменении масштаба
-function updateZoomSlider() {
-    const zoomSlider = document.getElementById('zoom-slider');
-    if (zoomSlider) {
-        zoomSlider.value = state.zoom * 100;
-    }
-}
-
-document.getElementById('reset-view')?.addEventListener('click', function() {
-    state.zoom = 1.0;
-    updateZoom();
-    
-    // Показать сообщение
-    Telegram.WebApp.showAlert('Масштаб сброшен до 100%');
-});
-    
     // Смена темы
     const themeBtn = document.getElementById('toggle-theme');
     if (themeBtn) {
@@ -780,6 +671,202 @@ document.getElementById('reset-view')?.addEventListener('click', function() {
     });
     
     console.log('Обработчики событий настроены');
+}
+
+// Управление масштабом через ползунок
+function setupZoomControls() {
+    const zoomControlBtn = document.getElementById('zoom-control');
+    const sliderContainer = document.getElementById('zoom-slider-container');
+    const closeZoomSliderBtn = document.getElementById('close-zoom-slider');
+    const zoomSlider = document.getElementById('zoom-slider');
+    
+    if (!zoomControlBtn || !sliderContainer) {
+        console.log('Элементы управления масштабом не найдены');
+        return;
+    }
+    
+    // Переменная для отслеживания состояния панели
+    let isZoomPanelOpen = false;
+    let closeTimeout = null;
+    
+    // Открытие/закрытие панели масштаба
+    zoomControlBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        if (isZoomPanelOpen) {
+            closeZoomPanel();
+        } else {
+            openZoomPanel();
+        }
+    });
+    
+    // Закрытие кнопкой закрытия
+    if (closeZoomSliderBtn) {
+        closeZoomSliderBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeZoomPanel();
+        });
+    }
+    
+    // Ползунок масштаба
+    if (zoomSlider) {
+        // Инициализируем ползунок текущим значением
+        zoomSlider.value = state.zoom * 100;
+        
+        zoomSlider.addEventListener('input', function(e) {
+            e.stopPropagation();
+            state.zoom = this.value / 100;
+            updateZoom();
+            
+            // Показать индикатор
+            showZoomIndicator(`${this.value}%`);
+            
+            // Сбрасываем таймер закрытия при взаимодействии
+            resetCloseTimer();
+        });
+    }
+    
+    // Пресеты масштаба
+    document.querySelectorAll('.zoom-preset-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const zoomValue = parseFloat(this.dataset.zoom);
+            state.zoom = zoomValue;
+            updateZoom();
+            
+            // Обновить ползунок
+            if (zoomSlider) {
+                zoomSlider.value = zoomValue * 100;
+            }
+            
+            // Показать сообщение
+            showZoomIndicator(`${zoomValue * 100}%`);
+            
+            // Сбрасываем таймер закрытия
+            resetCloseTimer();
+        });
+    });
+    
+    // Кнопка сброса
+    document.getElementById('reset-view')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        state.zoom = 1.0;
+        updateZoom();
+        
+        // Обновить ползунок
+        if (zoomSlider) {
+            zoomSlider.value = 100;
+        }
+        
+        // Показать сообщение
+        showZoomIndicator('100%');
+        
+        // Сбрасываем таймер закрытия
+        resetCloseTimer();
+    });
+    
+    // Закрытие панели при клике вне ее
+    document.addEventListener('click', function(e) {
+        if (isZoomPanelOpen && 
+            !sliderContainer.contains(e.target) && 
+            e.target !== zoomControlBtn && 
+            !zoomControlBtn.contains(e.target)) {
+            closeZoomPanel();
+        }
+    });
+    
+    // Закрытие панели при нажатии Escape
+    document.addEventListener('keydown', function(e) {
+        if (isZoomPanelOpen && e.key === 'Escape') {
+            closeZoomPanel();
+        }
+    });
+    
+    // Функции открытия/закрытия панели
+    function openZoomPanel() {
+        sliderContainer.classList.add('show');
+        isZoomPanelOpen = true;
+        
+        // Устанавливаем таймер автоматического закрытия через 5 секунд бездействия
+        startCloseTimer();
+    }
+    
+    function closeZoomPanel() {
+        sliderContainer.classList.remove('show');
+        isZoomPanelOpen = false;
+        
+        // Очищаем таймер
+        if (closeTimeout) {
+            clearTimeout(closeTimeout);
+            closeTimeout = null;
+        }
+    }
+    
+    function startCloseTimer() {
+        // Очищаем предыдущий таймер
+        if (closeTimeout) {
+            clearTimeout(closeTimeout);
+        }
+        
+        // Устанавливаем новый таймер на 5 секунд
+        closeTimeout = setTimeout(() => {
+            if (isZoomPanelOpen) {
+                closeZoomPanel();
+            }
+        }, 5000);
+    }
+    
+    function resetCloseTimer() {
+        startCloseTimer();
+    }
+}
+
+// Функция показа индикатора масштаба
+function showZoomIndicator(text) {
+    // Удаляем старый индикатор, если есть
+    const oldIndicator = document.getElementById('zoom-temp-indicator');
+    if (oldIndicator) {
+        oldIndicator.remove();
+    }
+    
+    // Создаем новый индикатор
+    const indicator = document.createElement('div');
+    indicator.id = 'zoom-temp-indicator';
+    indicator.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: opacity 0.3s ease;
+    `;
+    indicator.textContent = `Масштаб: ${text}`;
+    
+    document.body.appendChild(indicator);
+    
+    // Показываем с анимацией
+    requestAnimationFrame(() => {
+        indicator.style.opacity = '1';
+    });
+    
+    // Скрываем через 1 секунду
+    setTimeout(() => {
+        indicator.style.opacity = '0';
+        setTimeout(() => {
+            if (indicator.parentNode) {
+                indicator.parentNode.removeChild(indicator);
+            }
+        }, 300);
+    }, 1000);
 }
 
 // Фильтрация элементов
@@ -898,86 +985,6 @@ function adjustContainerSize() {
     } else {
         container.style.overflowX = 'hidden';
     }
-}
-
-// Обновление состояния кнопок масштаба
-function updateZoomButtons() {
-    // Эта функция больше не нужна, так как кнопки "Увеличить" и "Уменьшить" удалены
-    // Оставляем пустой для совместимости
-}
-
-// Функция показа индикатора масштаба
-function showZoomIndicator(text) {
-    // Удаляем старый индикатор, если есть
-    const oldIndicator = document.getElementById('zoom-temp-indicator');
-    if (oldIndicator) {
-        oldIndicator.remove();
-    }
-    
-    // Создаем новый индикатор
-    const indicator = document.createElement('div');
-    indicator.id = 'zoom-temp-indicator';
-    indicator.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        z-index: 9999;
-        pointer-events: none;
-        opacity: 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        transition: opacity 0.3s ease;
-    `;
-    indicator.textContent = `Масштаб: ${text}`;
-    
-    document.body.appendChild(indicator);
-    
-    // Показываем с анимацией
-    requestAnimationFrame(() => {
-        indicator.style.opacity = '1';
-    });
-    
-    // Скрываем через 1 секунду
-    setTimeout(() => {
-        indicator.style.opacity = '0';
-        setTimeout(() => {
-            if (indicator.parentNode) {
-                indicator.parentNode.removeChild(indicator);
-            }
-        }, 300);
-    }, 1000);
-}
-
-// Упрощенный контроль масштаба (только ползунок)
-function setupZoomControls() {
-    // Ползунок масштаба (основной способ управления)
-    const zoomSlider = document.getElementById('zoom-slider');
-    if (zoomSlider) {
-        zoomSlider.addEventListener('input', function() {
-            state.zoom = this.value / 100;
-            updateZoom();
-        });
-        
-        // Инициализируем ползунок текущим значением
-        zoomSlider.value = state.zoom * 100;
-    }
-    
-    // Кнопка сброса масштаба
-    document.getElementById('reset-view')?.addEventListener('click', function() {
-        state.zoom = 1.0;
-        updateZoom();
-        
-        // Обновить ползунок
-        if (zoomSlider) {
-            zoomSlider.value = 100;
-        }
-    });
 }
 
 // Обновление отступов таблицы
