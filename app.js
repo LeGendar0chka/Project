@@ -675,24 +675,32 @@ ${element.fundamental}`;
 
 // НОВАЯ ФУНКЦИЯ: Управление панелью масштаба
 function setupZoomControls() {
+    console.log('Настройка управления масштабом...');
+    
     const zoomControlBtn = document.getElementById('zoom-control');
-    const sliderContainer = document.getElementById('zoom-slider-container');
+    const zoomSliderContainer = document.querySelector('.zoom-dropdown-content');
     const closeZoomSliderBtn = document.getElementById('close-zoom-slider');
     const zoomSlider = document.getElementById('zoom-slider');
     
-    if (!zoomControlBtn || !sliderContainer) {
-        console.log('Элементы управления масштабом не найдены');
+    if (!zoomControlBtn || !zoomSliderContainer) {
+        console.error('Элементы управления масштабом не найдены');
         return;
     }
     
-    // Состояние панели
+    console.log('Найдены элементы:', {
+        zoomControlBtn: !!zoomControlBtn,
+        zoomSliderContainer: !!zoomSliderContainer,
+        closeZoomSliderBtn: !!closeZoomSliderBtn,
+        zoomSlider: !!zoomSlider
+    });
+    
+    // Флаг состояния панели
     let isZoomPanelOpen = false;
     
-    // Функция для открытия панели
+    // Функция открытия панели
     function openZoomPanel() {
-        if (isZoomPanelOpen) return;
-        
-        sliderContainer.classList.add('show');
+        console.log('Открытие панели масштаба');
+        zoomSliderContainer.classList.add('show');
         isZoomPanelOpen = true;
         
         // Добавляем обработчик для закрытия при клике вне панели
@@ -701,11 +709,10 @@ function setupZoomControls() {
         }, 10);
     }
     
-    // Функция для закрытия панели
+    // Функция закрытия панели
     function closeZoomPanel() {
-        if (!isZoomPanelOpen) return;
-        
-        sliderContainer.classList.remove('show');
+        console.log('Закрытие панели масштаба');
+        zoomSliderContainer.classList.remove('show');
         isZoomPanelOpen = false;
         
         // Удаляем обработчик
@@ -714,13 +721,19 @@ function setupZoomControls() {
     
     // Обработчик клика вне панели
     function handleOutsideClick(e) {
-        if (!sliderContainer.contains(e.target) && e.target !== zoomControlBtn) {
+        console.log('Клик вне панели', e.target);
+        
+        // Проверяем, был ли клик вне панели и не на кнопке масштаба
+        if (!zoomSliderContainer.contains(e.target) && 
+            e.target !== zoomControlBtn && 
+            !zoomControlBtn.contains(e.target)) {
             closeZoomPanel();
         }
     }
     
     // Обработчик для кнопки масштаба
     zoomControlBtn.addEventListener('click', function(e) {
+        console.log('Клик на кнопку масштаба');
         e.stopPropagation();
         
         if (isZoomPanelOpen) {
@@ -733,19 +746,29 @@ function setupZoomControls() {
     // Обработчик для кнопки закрытия
     if (closeZoomSliderBtn) {
         closeZoomSliderBtn.addEventListener('click', function(e) {
+            console.log('Клик на кнопку закрытия');
             e.stopPropagation();
             closeZoomPanel();
         });
     }
     
-    // Обработчик для ползунка
+    // Обработчик для ползунка масштаба
     if (zoomSlider) {
+        // Устанавливаем начальное значение
         zoomSlider.value = state.zoom * 100;
         
         zoomSlider.addEventListener('input', function(e) {
             e.stopPropagation();
             state.zoom = this.value / 100;
             updateZoom();
+            
+            // Обновляем отображение значения
+            const zoomValueElement = document.getElementById('zoom-value');
+            if (zoomValueElement) {
+                zoomValueElement.textContent = `${this.value}%`;
+            }
+            
+            // Показываем индикатор
             showZoomIndicator(`${this.value}%`);
         });
     }
@@ -758,26 +781,59 @@ function setupZoomControls() {
             state.zoom = zoomValue;
             updateZoom();
             
+            // Обновляем ползунок
             if (zoomSlider) {
                 zoomSlider.value = zoomValue * 100;
+                
+                // Обновляем отображение значения
+                const zoomValueElement = document.getElementById('zoom-value');
+                if (zoomValueElement) {
+                    zoomValueElement.textContent = `${zoomValue * 100}%`;
+                }
             }
             
+            // Показываем индикатор
             showZoomIndicator(`${zoomValue * 100}%`);
         });
     });
     
     // Обработчик для кнопки сброса
-    document.getElementById('reset-view')?.addEventListener('click', function(e) {
-        e.stopPropagation();
-        state.zoom = 1.0;
-        updateZoom();
-        
-        if (zoomSlider) {
-            zoomSlider.value = 100;
+    const resetViewBtn = document.getElementById('reset-view');
+    if (resetViewBtn) {
+        resetViewBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            state.zoom = 1.0;
+            updateZoom();
+            
+            // Обновляем ползунок
+            if (zoomSlider) {
+                zoomSlider.value = 100;
+                
+                // Обновляем отображение значения
+                const zoomValueElement = document.getElementById('zoom-value');
+                if (zoomValueElement) {
+                    zoomValueElement.textContent = '100%';
+                }
+            }
+            
+            // Показываем индикатор
+            showZoomIndicator('100%');
+            
+            // Показываем сообщение в Telegram
+            if (Telegram.WebApp && Telegram.WebApp.showAlert) {
+                Telegram.WebApp.showAlert('Масштаб сброшен до 100%');
+            }
+        });
+    }
+    
+    // Закрытие панели при нажатии Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isZoomPanelOpen) {
+            closeZoomPanel();
         }
-        
-        showZoomIndicator('100%');
     });
+    
+    console.log('Управление масштабом настроено');
 }
 
 // Функция показа индикатора масштаба
