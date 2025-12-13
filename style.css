@@ -899,3 +899,59 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+/* Дополнительные исправления для адаптивности */
+@media (max-width: 768px) {
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+    }
+    
+    .periodic-table {
+        min-width: 900px; /* Гарантируем минимальную ширину для скролла */
+    }
+    
+    .element, .table-cell.empty {
+        min-width: 45px !important;
+        min-height: 45px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .periodic-table {
+        min-width: 700px;
+    }
+    
+    .element, .table-cell.empty {
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+    
+    .element-symbol {
+        font-size: 14px !important;
+    }
+    
+    .element-number {
+        font-size: 9px !important;
+    }
+}
+
+/* Улучшенный скролл */
+.table-container::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: var(--border);
+    border-radius: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
