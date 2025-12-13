@@ -163,20 +163,21 @@ body {
     border-color: var(--primary);
 }
 
-/* Таблица Менделеева */
+/* Сама таблица Менделеева */
 .periodic-table {
     display: grid;
     grid-template-columns: repeat(18, 1fr);
     gap: 4px;
-    margin-bottom: 20px;
     position: relative;
     background: var(--card-bg);
-    padding: 15px;
     border-radius: 15px;
-    box-shadow: 0 4px 6px var(--shadow);
-    overflow-x: auto;
+    transition: transform 0.3s ease;
+    transform-origin: center top; /* Масштабирование от верхнего центра */
+    width: 100%; /* Занимает всю ширину контейнера */
+    max-width: 100%;
 }
 
+/* Элементы таблицы */
 .element {
     aspect-ratio: 1;
     display: flex;
@@ -190,12 +191,31 @@ body {
     font-weight: bold;
     position: relative;
     border: 2px solid transparent;
+    width: 100%; /* Занимает всю доступную ширину ячейки */
+    height: 100%; /* Занимает всю доступную высоту ячейки */
 }
 
-.element:hover {
-    transform: scale(1.1);
-    z-index: 10;
-    box-shadow: 0 5px 15px var(--shadow);
+/* Адаптивность */
+@media (max-width: 768px) {
+    .table-container {
+        padding: 10px;
+        min-height: 400px;
+    }
+    
+    .periodic-table {
+        gap: 3px;
+    }
+}
+
+@media (max-width: 480px) {
+    .table-container {
+        padding: 5px;
+        min-height: 300px;
+    }
+    
+    .periodic-table {
+        gap: 2px;
+    }
 }
 
 .element.selected {
@@ -588,8 +608,6 @@ body {
     display: flex;
 }
 
-/* Добавить в конец существующего style.css */
-
 /* Загрузка */
 .loading {
     text-align: center;
@@ -719,10 +737,21 @@ body {
     z-index: 1;
 }
 
-/* Контейнер таблицы */
-.container {
-    overflow-x: hidden;
+/* Контейнер для таблицы */
+.table-container {
     position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 20px;
+    padding: 15px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px var(--shadow);
+    overflow: auto; /* Скролл при большом масштабе */
+    min-height: 600px; /* Минимальная высота */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 /* Кнопки масштабирования */
