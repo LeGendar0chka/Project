@@ -223,6 +223,7 @@ function showLoading(show) {
 }
 
 // В функции initializeTable() обновите создание таблицы:
+// В функции initializeTable() добавьте базовые стили:
 function initializeTable() {
     console.log('Инициализация таблицы...');
     
@@ -236,13 +237,18 @@ function initializeTable() {
     
     table.innerHTML = '';
     
-    // Создаем сетку 9×18 с фиксированными размерами
+    // Базовый размер ячейки
+    const baseCellSize = 60;
+    
+    // Создаем сетку 9×18
     for (let row = 1; row <= 9; row++) {
         for (let col = 1; col <= 18; col++) {
             const cell = document.createElement('div');
             cell.className = 'table-cell empty';
             cell.style.gridRow = row;
             cell.style.gridColumn = col;
+            cell.style.minWidth = `${baseCellSize}px`;
+            cell.style.minHeight = `${baseCellSize}px`;
             table.appendChild(cell);
         }
     }
@@ -253,6 +259,9 @@ function initializeTable() {
         const pos = elementPositions[element.number];
         if (pos) {
             const elementDiv = createElementDiv(element, pos);
+            // Устанавливаем базовые размеры
+            elementDiv.style.minWidth = `${baseCellSize}px`;
+            elementDiv.style.minHeight = `${baseCellSize}px`;
             table.appendChild(elementDiv);
             addedElements++;
         }
@@ -263,13 +272,8 @@ function initializeTable() {
     
     // Показываем таблицу
     table.style.display = 'grid';
-    
-    // Настраиваем начальный масштаб
-    table.style.transform = `scale(${state.zoom})`;
-    table.style.transformOrigin = 'center top';
-    
-    // Настраиваем размер контейнера
-    adjustContainerSize();
+    table.style.width = 'auto'; // Важно: авто-ширина
+    table.style.gridAutoColumns = 'minmax(auto, 1fr)';
     
     console.log(`Таблица инициализирована. Элементов: ${addedElements}`);
 }
