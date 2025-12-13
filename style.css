@@ -187,6 +187,7 @@ body {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -323,9 +324,11 @@ body {
     0% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.7;
     }
+
     100% {
         opacity: 1;
     }
@@ -535,7 +538,8 @@ body {
     border-color: var(--primary);
 }
 
-/* ВЫПАДАЮЩЕЕ МЕНЮ МАСШТАБА - ИСПРАВЛЕННОЕ */
+/* ВАЖНО: УДАЛИЛИ ВСЕ СТИЛИ С :hover ДЛЯ ПАНЕЛИ МАСШТАБА */
+/* Выпадающее меню масштаба */
 .zoom-dropdown {
     position: relative;
     display: inline-block;
@@ -556,7 +560,12 @@ body {
     border: 2px solid var(--border);
 }
 
-/* УБРАЛИ HOVER-ЭФФЕКТ и добавили класс для показа */
+/* УДАЛИЛ ЭТОТ БЛОК - он вызывал проблему */
+/* .zoom-dropdown:hover .zoom-dropdown-content {
+    display: block;
+} */
+
+/* ВМЕСТО ЭТОГО ДОБАВИМ КЛАСС ДЛЯ УПРАВЛЕНИЯ ЧЕРЕЗ JS */
 .zoom-dropdown-content.show {
     display: block;
     animation: zoomPanelFadeIn 0.3s ease-out;
@@ -887,23 +896,4 @@ body {
     .zoom-presets {
         grid-template-columns: repeat(2, 1fr);
     }
-}
-
-/* Overlay для панели масштаба (опционально, для модального эффекта) */
-#zoom-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-#zoom-modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
 }
