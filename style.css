@@ -190,37 +190,32 @@ body {
 }
 
 /* Контейнер для таблицы - ИСПРАВЛЕНО */
+/* Контейнер для таблицы - ОБНОВЛЕНО */
 .table-container {
     position: relative;
     width: 100%;
-    max-width: 1200px;
+    max-width: 100vw; /* На всю ширину экрана */
     margin: 0 auto 20px;
     padding: 15px;
     background: var(--card-bg);
     border-radius: 15px;
     box-shadow: 0 4px 6px var(--shadow);
-    overflow: auto; /* Убедитесь, что это auto, а не hidden */
+    overflow: auto; /* Скролл во всех направлениях */
     min-height: 600px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    /* ДОБАВИТЬ: */
-    overflow-x: auto;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Для плавного скролла на мобильных */
+    display: block; /* Меняем flex на block */
 }
-/* Таблица Менделеева */
 .periodic-table {
     display: grid;
-    grid-template-columns: repeat(18, 1fr);
+    grid-template-columns: repeat(18, minmax(30px, 1fr)); /* Гибкие колонки */
     gap: 4px;
-    transition: transform 0.3s ease;
-    transform-origin: center top;
-    width: 100%;
+    transition: all 0.3s ease;
+    width: auto; /* Автоматическая ширина */
+    margin: 0 auto;
 }
 
-/* Элементы таблицы */
-.element {
+
+/* Элементы таблицы - ОБНОВЛЕНО */
+.element, .table-cell.empty {
     aspect-ratio: 1;
     display: flex;
     flex-direction: column;
@@ -233,6 +228,9 @@ body {
     font-weight: bold;
     position: relative;
     border: 2px solid transparent;
+    min-width: 60px; /* Базовый размер */
+    min-height: 60px;
+    box-sizing: border-box;
 }
 
 .element:hover {
