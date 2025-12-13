@@ -222,18 +222,21 @@ function showLoading(show) {
     }
 }
 
-// Создание таблицы
+// В функции initializeTable() обновите создание таблицы:
 function initializeTable() {
     console.log('Инициализация таблицы...');
+    
+    const container = document.getElementById('table-container');
     const table = document.getElementById('periodic-table');
-    if (!table) {
-        console.error('Элемент #periodic-table не найден!');
+    
+    if (!container || !table) {
+        console.error('Контейнеры таблицы не найдены');
         return;
     }
     
     table.innerHTML = '';
     
-    // Создаем сетку 9×18
+    // Создаем сетку 9×18 с фиксированными размерами
     for (let row = 1; row <= 9; row++) {
         for (let col = 1; col <= 18; col++) {
             const cell = document.createElement('div');
@@ -252,15 +255,26 @@ function initializeTable() {
             const elementDiv = createElementDiv(element, pos);
             table.appendChild(elementDiv);
             addedElements++;
-        } else {
-            console.warn(`Не найдены координаты для элемента ${element.number} (${element.symbol})`);
         }
     });
     
-    console.log(`Добавлено элементов в таблицу: ${addedElements}`);
-    
     // Добавляем метки
     addRowLabels();
+    
+    // Показываем таблицу
+    table.style.display = 'grid';
+    
+    // Настраиваем начальный масштаб
+    table.style.transform = `scale(${state.zoom})`;
+    table.style.transformOrigin = 'center top';
+    
+    // Настраиваем размер контейнера
+    adjustContainerSize();
+    
+    // Настраиваем кнопки масштаба
+    updateZoomButtons();
+    
+    console.log(`Таблица инициализирована. Элементов: ${addedElements}`);
 }
 
 // Создание элемента таблицы
