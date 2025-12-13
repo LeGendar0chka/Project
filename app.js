@@ -642,7 +642,103 @@ document.getElementById('zoom-in')?.addEventListener('click', function() {
         Telegram.WebApp.showAlert(`Масштаб: ${Math.round(state.zoom * 100)}%`);
     }
 });
+// Добавьте эти обработчики в функцию setupEventListeners:
 
+// Управление масштабом через ползунок
+document.getElementById('zoom-control')?.addEventListener('click', function() {
+    const sliderContainer = document.getElementById('zoom-slider-container');
+    if (sliderContainer) {
+        sliderContainer.classList.toggle('show');
+    }
+});
+
+document.getElementById('close-zoom-slider')?.addEventListener('click', function() {
+    const sliderContainer = document.getElementById('zoom-slider-container');
+    if (sliderContainer) {
+        sliderContainer.classList.remove('show');
+    }
+});
+
+// Ползунок масштаба
+const zoomSlider = document.getElementById('zoom-slider');
+if (zoomSlider) {
+    zoomSlider.addEventListener('input', function() {
+        state.zoom = this.value / 100;
+        updateZoom();
+        
+        // Показать индикатор
+        showZoomIndicator(`${this.value}%`);
+    });
+    
+    zoomSlider.addEventListener('change', function() {
+        // Скрыть панель через 2 секунды
+        setTimeout(() => {
+            const sliderContainer = document.getElementById('zoom-slider-container');
+            if (sliderContainer) {
+                sliderContainer.classList.remove('show');
+            }
+        }, 2000);
+    });
+}
+
+// Пресеты масштаба
+document.querySelectorAll('.zoom-preset-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const zoomValue = parseFloat(this.dataset.zoom);
+        state.zoom = zoomValue;
+        updateZoom();
+        
+        // Обновить ползунок
+        if (zoomSlider) {
+            zoomSlider.value = zoomValue * 100;
+        }
+        
+        // Показать сообщение
+        showZoomIndicator(`${zoomValue * 100}%`);
+        
+        // Скрыть панель
+        setTimeout(() => {
+            const sliderContainer = document.getElementById('zoom-slider-container');
+            if (sliderContainer) {
+                sliderContainer.classList.remove('show');
+            }
+        }, 1000);
+    });
+});
+
+// Функция показа индикатора масштаба
+function showZoomIndicator(text) {
+    const indicator = document.getElementById('zoom-indicator');
+    if (indicator) {
+        indicator.textContent = `Масштаб: ${text}`;
+        indicator.classList.add('show');
+        
+        setTimeout(() => {
+            indicator.classList.remove('show');
+        }, 2000);
+    }
+}
+
+// Закрытие панели масштаба при клике вне ее
+document.addEventListener('click', function(e) {
+    const sliderContainer = document.getElementById('zoom-slider-container');
+    const zoomControlBtn = document.getElementById('zoom-control');
+    
+    if (sliderContainer && sliderContainer.classList.contains('show') &&
+        !sliderContainer.contains(e.target) &&
+        e.target !== zoomControlBtn &&
+        !zoomControlBtn?.contains(e.target)) {
+        sliderContainer.classList.remove('show');
+    }
+});
+
+// Обновляем ползунок при изменении масштаба
+function updateZoomSlider() {
+    const zoomSlider = document.getElementById('zoom-slider');
+    if (zoomSlider) {
+        zoomSlider.value = state.zoom * 100;
+    }
+}
 document.getElementById('zoom-out')?.addEventListener('click', function() {
     if (state.zoom > 0.5) {
         state.zoom -= 0.1;
