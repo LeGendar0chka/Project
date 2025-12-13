@@ -923,16 +923,29 @@ function adjustContainerSize() {
     // Получаем реальные размеры таблицы
     const tableRect = table.getBoundingClientRect();
     const scaledHeight = tableRect.height;
+    const scaledWidth = tableRect.width;
     
     // Устанавливаем минимальную высоту контейнера
     container.style.minHeight = `${Math.max(400, scaledHeight)}px`;
     
-    // Если таблица слишком широкая, добавляем горизонтальный скролл
-    if (tableRect.width > container.clientWidth) {
-        container.style.overflowX = 'auto';
+    // ОСНОВНОЕ ИСПРАВЛЕНИЕ: Автоматически включаем скролл при необходимости
+    container.style.overflowX = scaledWidth > container.clientWidth ? 'auto' : 'hidden';
+    container.style.overflowY = 'auto';
+    
+    // Также обновим ширину контейнера для лучшего отображения
+    if (scaledWidth > container.clientWidth) {
+        container.style.justifyContent = 'flex-start'; // Выравнивание влево при скролле
     } else {
-        container.style.overflowX = 'hidden';
+        container.style.justifyContent = 'center'; // Центрирование если помещается
     }
+    
+    console.log('Размеры контейнера обновлены:', {
+        containerWidth: container.clientWidth,
+        tableWidth: scaledWidth,
+        containerHeight: container.clientHeight,
+        tableHeight: scaledHeight,
+        overflowX: container.style.overflowX
+    });
 }
 
 // Сообщение о готовности
