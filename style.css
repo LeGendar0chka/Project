@@ -21,6 +21,7 @@
     --transition: #a9e34b;
     --lanthanide: #748ffc;
     --actinide: #f783ac;
+    --post-transition: #22b8cf;
     --unknown: #adb5bd;
     --border: #dee2e6;
     --shadow: rgba(0, 0, 0, 0.1);
@@ -184,13 +185,8 @@ body {
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Контейнер для таблицы */
@@ -210,7 +206,7 @@ body {
     align-items: flex-start;
 }
 
-/* Сама таблица Менделеева */
+/* Таблица Менделеева */
 .periodic-table {
     display: grid;
     grid-template-columns: repeat(18, 1fr);
@@ -311,6 +307,11 @@ body {
     color: white;
 }
 
+.element.post-transition {
+    background-color: var(--post-transition);
+    color: white;
+}
+
 .element.unknown {
     background-color: var(--unknown);
     color: white;
@@ -321,17 +322,9 @@ body {
 }
 
 @keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.7;
-    }
-
-    100% {
-        opacity: 1;
-    }
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
 }
 
 /* Блок информации об элементе */
@@ -479,6 +472,17 @@ body {
     line-height: 1.6;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Кнопки действий */
 .actions {
     display: flex;
@@ -538,8 +542,7 @@ body {
     border-color: var(--primary);
 }
 
-/* ВАЖНО: УДАЛИЛИ ВСЕ СТИЛИ С :hover ДЛЯ ПАНЕЛИ МАСШТАБА */
-/* Выпадающее меню масштаба */
+/* Панель масштаба */
 .zoom-dropdown {
     position: relative;
     display: inline-block;
@@ -560,12 +563,6 @@ body {
     border: 2px solid var(--border);
 }
 
-/* УДАЛИЛ ЭТОТ БЛОК - он вызывал проблему */
-/* .zoom-dropdown:hover .zoom-dropdown-content {
-    display: block;
-} */
-
-/* ВМЕСТО ЭТОГО ДОБАВИМ КЛАСС ДЛЯ УПРАВЛЕНИЯ ЧЕРЕЗ JS */
 .zoom-dropdown-content.show {
     display: block;
     animation: zoomPanelFadeIn 0.3s ease-out;
@@ -768,18 +765,6 @@ body {
     font-style: italic;
 }
 
-/* Анимация появления */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* Адаптивность */
 @media (max-width: 768px) {
     .header h1 {
@@ -820,7 +805,7 @@ body {
         min-height: 400px;
     }
 
-    /* Адаптивность для панели масштаба на мобильных */
+    /* Панель масштаба на мобильных */
     .zoom-dropdown-content {
         position: fixed;
         bottom: 70px;
