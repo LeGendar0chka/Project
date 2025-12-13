@@ -493,7 +493,13 @@ function getCategoryName(category) {
     };
     return names[category] || category;
 }
-
+function handleResize() {
+    adjustContainerSize();
+    // Принудительно обновляем масштаб при ресайзе
+    if (state.zoom !== 1) {
+        updateZoom();
+    }
+}
 // Настройка обработчиков событий
 function setupEventListeners() {
     console.log('Настройка обработчиков событий...');
@@ -521,8 +527,7 @@ function setupEventListeners() {
     setupZoomControls();
     
     // Обработка изменения размера окна
-    window.addEventListener('resize', () => {
-        adjustContainerSize();
+  window.addEventListener('resize', handleResize);
     });
     
     // Фильтры
