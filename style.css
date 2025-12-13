@@ -189,7 +189,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Контейнер для таблицы */
+/* Контейнер для таблицы - ИСПРАВЛЕНО */
 .table-container {
     position: relative;
     width: 100%;
@@ -199,13 +199,16 @@ body {
     background: var(--card-bg);
     border-radius: 15px;
     box-shadow: 0 4px 6px var(--shadow);
-    overflow: auto;
+    overflow: auto; /* Убедитесь, что это auto, а не hidden */
     min-height: 600px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    /* ДОБАВИТЬ: */
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Для плавного скролла на мобильных */
 }
-
 /* Таблица Менделеева */
 .periodic-table {
     display: grid;
