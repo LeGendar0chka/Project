@@ -758,15 +758,65 @@ function updateStats() {
     if (totalElement) totalElement.textContent = total;
     if (filteredElement) filteredElement.textContent = filtered;
 }
-
 // Обновление масштаба
 function updateZoom() {
     const table = document.querySelector('.periodic-table');
     if (table) {
+        // Ограничиваем масштаб
+        state.zoom = Math.max(0.5, Math.min(2.0, state.zoom));
+        
+        // Применяем трансформацию
         table.style.transform = `scale(${state.zoom})`;
-        table.style.transformOrigin = 'center top';
+        table.style.transformOrigin = 'top center';
+        
+        // Обновляем отступы для предотвращения перекрытия
+        updateTableMargins();
+        
+        console.log('Масштаб обновлен:', state.zoom);
     }
 }
 
+// Обновление отступов таблицы
+function updateTableMargins() {
+    const table = document.querySelector('.periodic-table');
+    const container = document.querySelector('.container');
+    
+    if (!table || !container) return;
+    
+    // Рассчитываем необходимые отступы
+    const scaleFactor = state.zoom;
+    const baseWidth = 1200; // Базовая ширина таблицы
+    const scaledWidth = baseWidth * scaleFactor;
+    
+    // Если таблица шире контейнера, добавляем горизонтальный скролл
+    if (scaledWidth > container.clientWidth) {
+        table.style.overflowX = 'auto';
+        table.style.maxWidth = '100%';
+        table.style.margin = '0 auto';
+    } else {
+        table.style.overflowX = 'visible';
+        table.style.maxWidth = `${scaledWidth}px`;
+        table.style.margin = '0 auto';
+    }
+    
+    // Обновляем кнопки масштаба
+    updateZoomButtons();
+}
+
+// Обновление состояния кнопок масштаба
+function updateZoomButtons() {
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    
+    if (zoomInBtn) {
+        zoomInBtn.disabled = state.zoom >= 2.0;
+        zoomInBtn.style.opacity = state.zoom >= 2.0 ? '0.5' : '1';
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.disabled = state.zoom <= 0.5;
+        zoomOutBtn.style.opacity = state.zoom <= 0.5 ? '0.5' : '1';
+    }
+}
 // Сообщение о готовности
 console.log('Таблица Менделеева инициализирована');
