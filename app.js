@@ -568,13 +568,14 @@ function setupEventListeners() {
             filterElements();
         });
     }
-       // Настройка контроля масштаба
+    // Настройка контроля масштаба
     setupZoomControls();
     
     // Обработка изменения размера окна
     window.addEventListener('resize', () => {
         adjustContainerSize();
     });
+    
     // Фильтры
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -871,9 +872,6 @@ function updateZoom() {
     // Обновляем размеры контейнера при необходимости
     adjustContainerSize();
     
-    // Обновляем состояние кнопок
-    updateZoomButtons();
-    
     // Показываем текущий масштаб
     showZoomIndicator(`${Math.round(state.zoom * 100)}%`);
     
@@ -904,20 +902,8 @@ function adjustContainerSize() {
 
 // Обновление состояния кнопок масштаба
 function updateZoomButtons() {
-    const zoomInBtn = document.getElementById('zoom-in');
-    const zoomOutBtn = document.getElementById('zoom-out');
-    
-    if (zoomInBtn) {
-        zoomInBtn.disabled = state.zoom >= 2.0;
-        zoomInBtn.style.opacity = zoomInBtn.disabled ? '0.5' : '1';
-        zoomInBtn.style.cursor = zoomInBtn.disabled ? 'not-allowed' : 'pointer';
-    }
-    
-    if (zoomOutBtn) {
-        zoomOutBtn.disabled = state.zoom <= 0.5;
-        zoomOutBtn.style.opacity = zoomOutBtn.disabled ? '0.5' : '1';
-        zoomOutBtn.style.cursor = zoomOutBtn.disabled ? 'not-allowed' : 'pointer';
-    }
+    // Эта функция больше не нужна, так как кнопки "Увеличить" и "Уменьшить" удалены
+    // Оставляем пустой для совместимости
 }
 
 // Функция показа индикатора масштаба
@@ -968,38 +954,30 @@ function showZoomIndicator(text) {
     }, 1000);
 }
 
-// Упрощенный контроль масштаба
+// Упрощенный контроль масштаба (только ползунок)
 function setupZoomControls() {
-    // Увеличить
-    document.getElementById('zoom-in')?.addEventListener('click', function() {
-        if (!this.disabled) {
-            state.zoom += 0.1;
-            updateZoom();
-        }
-    });
-    
-    // Уменьшить
-    document.getElementById('zoom-out')?.addEventListener('click', function() {
-        if (!this.disabled) {
-            state.zoom -= 0.1;
-            updateZoom();
-        }
-    });
-    
-    // Сбросить
-    document.getElementById('reset-view')?.addEventListener('click', function() {
-        state.zoom = 1.0;
-        updateZoom();
-    });
-    
-    // Ползунок масштаба (если есть)
+    // Ползунок масштаба (основной способ управления)
     const zoomSlider = document.getElementById('zoom-slider');
     if (zoomSlider) {
         zoomSlider.addEventListener('input', function() {
             state.zoom = this.value / 100;
             updateZoom();
         });
+        
+        // Инициализируем ползунок текущим значением
+        zoomSlider.value = state.zoom * 100;
     }
+    
+    // Кнопка сброса масштаба
+    document.getElementById('reset-view')?.addEventListener('click', function() {
+        state.zoom = 1.0;
+        updateZoom();
+        
+        // Обновить ползунок
+        if (zoomSlider) {
+            zoomSlider.value = 100;
+        }
+    });
 }
 
 // Обновление отступов таблицы
@@ -1024,9 +1002,6 @@ function updateTableMargins() {
         table.style.maxWidth = `${scaledWidth}px`;
         table.style.margin = '0 auto';
     }
-    
-    // Обновляем кнопки масштаба
-    updateZoomButtons();
 }
 
 // Сообщение о готовности
